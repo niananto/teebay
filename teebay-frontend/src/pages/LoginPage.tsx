@@ -1,5 +1,7 @@
 import { useForm } from '@mantine/form';
-import { Button, TextInput, Container } from '@mantine/core';
+import { Button, TextInput } from '@mantine/core';
+import { useNavigate, Link } from 'react-router-dom';
+import styles from '../styles/LoginPage.module.css';
 // import { gql, useMutation } from '@apollo/client';
 
 // const LOGIN = gql`
@@ -17,6 +19,8 @@ type LoginFormValues = {
 };
 
 export default function LoginPage() {
+    const navigate = useNavigate();
+
   const form = useForm<LoginFormValues>({
     initialValues: { email: '', password: '' },
   });
@@ -30,16 +34,37 @@ export default function LoginPage() {
     // localStorage.setItem('user', JSON.stringify(res.data.login.user));
     localStorage.setItem('user', JSON.stringify({ id: '1', name: 'Test User' })); // Mock user data for demo
     // redirect to home page or dashboard
-    window.location.href = '/';
+    navigate('/');
   };
 
   return (
-    <Container>
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <TextInput label="Email" {...form.getInputProps('email')} />
-        <TextInput label="Password" type="password" {...form.getInputProps('password')} />
-        <Button type="submit" mt="md">Login</Button>
-      </form>
-    </Container>
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <div className={styles.title}>SIGN IN</div>
+
+        <form onSubmit={form.onSubmit(handleSubmit)}>
+          <TextInput
+            placeholder="Email"
+            className={styles.input}
+            {...form.getInputProps('email')}
+            required
+          />
+          <TextInput
+            placeholder="Password"
+            type="password"
+            className={styles.input}
+            {...form.getInputProps('password')}
+            required
+          />
+          <Button type="submit" className={styles.button}>
+            LOGIN
+          </Button>
+        </form>
+
+        <div className={styles.linkText}>
+          Don&apos;t have an account? <Link to='/register'>Signup</Link>
+        </div>
+      </div>
+    </div>
   );
 }
