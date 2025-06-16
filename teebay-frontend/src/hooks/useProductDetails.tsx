@@ -1,9 +1,8 @@
-// import {useQuery, gql} from '@apollo/client';
+// import { useQuery, gql } from '@apollo/client';
 
-// export const GET_PRODUCTS = gql`
-//   query Products($page: Int, $limit: Int) {
-//     products(page: $page, limit: $limit) {
-//       id
+// export const GET_PRODUCT = gql`
+//   query Product($id: ID!) {
+//     products(id: $id) {
 //       name
 //       description
 //       price
@@ -28,19 +27,18 @@ const dummyProducts = [
   { id: '12', name: 'Product 12', description: 'Description 12', price: 120, mode: 'sell', categories: ['TOYS'] },
 ];
 
-export const useProductList = ({ page = 1, limit = 5 }) => {
-  // const { data, loading, error } = useQuery(GET_PRODUCTS, {
-  //     variables: { page, limit },
+export const useProductDetails = (id: number) => {
+  // const { data, loading, error } = useQuery(GET_PRODUCT, {
+  //   variables: { id },
   // });
   // return {
-  //     products: data?.products || [],
-  //     loading,
-  //     error,
+  //   product: data?.products?.[0] ?? null,
+  //   loading,
+  //   error,
   // };
 
   return {
-    products:
-      dummyProducts.slice((page - 1) * limit, page * limit),
+    product: dummyProducts.find((p) => p.id === String(id)) || null,
     loading: false,
     error: null,
   };

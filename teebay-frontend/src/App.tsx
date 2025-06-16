@@ -3,6 +3,7 @@ import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProductListPage from './pages/ProductListPage';
+import ProductDetailsPage from './pages/ProductDetailsPage';
 import './App.css'
 
 export default function App() {
@@ -12,6 +13,8 @@ export default function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/products" element={<ProductListPage />} />
+      <Route path="/products/:id" element={<ProductDetailsPage />} />
+      <Route path="*" element={<div>404 Not Found</div>} />
     </Routes>
   );
 }

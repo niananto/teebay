@@ -1,12 +1,12 @@
 import { Modal, Button, Text, Group } from '@mantine/core';
 
-interface Props {
+interface DeleteConfirmationProps {
   opened: boolean;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-export function DeleteConfirmationModal({ opened, onClose, onConfirm }: Props) {
+export default function DeleteConfirmationModal({ opened, onClose, onConfirm }: DeleteConfirmationProps) {
   return (
     <Modal
       opened={opened}

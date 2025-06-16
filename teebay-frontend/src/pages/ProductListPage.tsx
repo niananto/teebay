@@ -8,7 +8,8 @@ import {
   Stack,
 } from '@mantine/core';
 import ProductCard from '../components/ProductCard';
-import { DeleteConfirmationModal } from '../components/DeleteConfirmationModal';
+import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
+import { Link } from 'react-router-dom';
 
 export default function ProductListPage() {
   const [page, setPage] = useState(1);
@@ -57,6 +58,9 @@ export default function ProductListPage() {
               createdAt={p.createdAt}
               views={p.views}
             />
+            <Link to={`/products/${p.id}`}>
+              <Button color="blue" size="xs">View Product</Button>
+            </Link>
             <Button color="red" size="xs" onClick={() => openDeleteModal(p.id)}>
               Delete Product
             </Button>
