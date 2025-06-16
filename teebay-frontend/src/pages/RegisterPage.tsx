@@ -6,7 +6,7 @@ import {
 } from '@mantine/core';
 import { useState } from 'react';
 import styles from '../styles/RegisterPage.module.css';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 type RegisterFormValues = {
   firstName: string;
@@ -19,6 +19,8 @@ type RegisterFormValues = {
 };
 
 export default function RegisterPage() {
+  const navigate = useNavigate();
+
   const form = useForm<RegisterFormValues>({
     initialValues: {
       firstName: '',
@@ -42,7 +44,7 @@ export default function RegisterPage() {
 
   const handleSubmit = async (values: RegisterFormValues) => {
     console.log('Submitting registration with values:', values);
-    window.location.href = '/login';
+    navigate('/login'); // Redirect to login page after registration
   };
 
   return (
