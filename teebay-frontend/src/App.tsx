@@ -5,6 +5,7 @@ import RegisterPage from './pages/RegisterPage';
 import ProductListPage from './pages/ProductListPage';
 import ProductDetailsPage from './pages/ProductDetailsPage';
 import EditProductPage from './pages/EditProductPage';
+import AddProductPage from './pages/AddProductPage';
 import './App.css'
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
       <Route path="/products" element={<ProductListPage />} />
       <Route path="/products/:id" element={<ProductDetailsPage />} />
       <Route path="/products/:id/edit" element={<EditProductPage />} />
+      <Route path="/products/add" element={<AddProductPage />} />
       <Route path="*" element={<div>404 Not Found</div>} />
     </Routes>
   );
