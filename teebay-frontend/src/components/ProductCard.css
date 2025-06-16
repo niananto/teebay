@@ -1,0 +1,32 @@
+.product-card {
+  border: 1px solid #e1e1e1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.product-name {
+  margin-bottom: 8px;
+}
+
+.category-line {
+  margin-bottom: 6px;
+}
+
+.price-line {
+  margin-bottom: 6px;
+}
+
+.price {
+  font-weight: bold;
+  color: #0d9488;
+}
+
+.rent {
+  font-weight: bold;
+  color: #7c3aed;
+}
+
+.description {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
