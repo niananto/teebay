@@ -81,7 +81,9 @@ export default function ProductListPage() {
       </div>
 
       <div className="footer">
-        <Button color="violet">Add Product</Button>
+        <Link to="/products/add">
+          <Button color="green">Add New Product</Button>
+        </Link>
       </div>
     </Container>
   );
