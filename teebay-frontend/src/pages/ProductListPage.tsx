@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useProductList } from '../hooks/useProductList';
 import {
   Container,
@@ -8,6 +8,7 @@ import {
   Stack,
 } from '@mantine/core';
 import ProductCard from '../components/ProductCard';
+import { DeleteConfirmationModal } from '../components/DeleteConfirmationModal';
 
 export default function ProductListPage() {
   const [page, setPage] = useState(1);
@@ -21,6 +22,20 @@ export default function ProductListPage() {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Something went wrong</div>;
 
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
+
+  const openDeleteModal = (productId: number) => {
+    setSelectedProductId(productId);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    console.log(`Delete product ${selectedProductId}`);
+    setDeleteModalOpen(false);
+    // will be triggerring mutation here
+  };
+
   return (
     <Container size="lg" className="product-container">
       <div className="header">
@@ -31,19 +46,29 @@ export default function ProductListPage() {
 
       <Stack gap="lg">
         {products.map((p: any) => (
-          <ProductCard
-            key={p.id}
-            name={p.name}
-            categories={p.categories}
-            price={p.price}
-            rent={p.rent}
-            rentType={p.rent_type}
-            description={p.description}
-            createdAt={p.createdAt}
-            views={p.views}
-          />
+          <React.Fragment key={p.id}>
+            <ProductCard
+              name={p.name}
+              categories={p.categories}
+              price={p.price}
+              rent={p.rent}
+              rentType={p.rent_type}
+              description={p.description}
+              createdAt={p.createdAt}
+              views={p.views}
+            />
+            <Button color="red" size="xs" onClick={() => openDeleteModal(p.id)}>
+              Delete Product
+            </Button>
+          </React.Fragment>
         ))}
       </Stack>
+
+      <DeleteConfirmationModal
+        opened={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+      />
 
       <div className="pagination">
         <Button onClick={handlePrev} disabled={page === 1}>Previous</Button>
