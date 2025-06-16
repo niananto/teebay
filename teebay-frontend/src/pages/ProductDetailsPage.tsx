@@ -10,5 +10,5 @@ export default function ProductDetailsPage() {
     if (loading) return <div>Loading...</div>;
     if (error || !product) return <div>Failed to load product</div>;
 
-  return <ProductDetails {...product} />;
+  return <ProductDetails {...product} buttonType="edit" />;
 }
