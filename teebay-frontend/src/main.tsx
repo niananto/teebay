@@ -5,7 +5,7 @@ import App from './App.tsx'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'  
 import { BrowserRouter } from 'react-router-dom'
 import { MantineProvider } from '@mantine/core'
-import { AuthProvider } from './contexts/AuthContext.tsx'
+import { AuthProvider } from './auth/AuthContext.tsx'
 import '@mantine/core/styles.css';
 
 const client = new ApolloClient({

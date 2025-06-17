@@ -5,7 +5,7 @@ import { useNavigate, Link, Navigate } from 'react-router-dom';
 import styles from '../styles/LoginPage.module.css';
 import { gql, useMutation } from '@apollo/client';
 import { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../auth/AuthContext';
 
 const LOGIN = gql`
   mutation Login($handle: String!, $password: String!) {

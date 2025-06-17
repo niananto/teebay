@@ -6,18 +6,20 @@ import ProductListPage from './pages/ProductListPage';
 import ProductDetailsPage from './pages/ProductDetailsPage';
 import EditProductPage from './pages/EditProductPage';
 import AddProductPage from './pages/AddProductPage';
+import { ProtectedRoute } from './auth/ProtectedRoute';
+import { PublicRoute } from './auth/PublicRoute';
 import './App.css'
 
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/products" element={<ProductListPage />} />
-      <Route path="/products/:id" element={<ProductDetailsPage />} />
-      <Route path="/products/:id/edit" element={<EditProductPage />} />
-      <Route path="/products/add" element={<AddProductPage />} />
+      <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+      <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+      <Route path="/products" element={<ProtectedRoute><ProductListPage /></ProtectedRoute>} />
+      <Route path="/products/:id" element={<ProtectedRoute><ProductDetailsPage /></ProtectedRoute>} />
+      <Route path="/products/:id/edit" element={<ProtectedRoute><EditProductPage /></ProtectedRoute>} />
+      <Route path="/products/add" element={<ProtectedRoute><AddProductPage /></ProtectedRoute>} />
       <Route path="*" element={<div>404 Not Found</div>} />
     </Routes>
   );
