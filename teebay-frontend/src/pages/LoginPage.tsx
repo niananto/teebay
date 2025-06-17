@@ -1,7 +1,7 @@
 import { useForm } from '@mantine/form';
 import { Button, TextInput, Text, ActionIcon } from '@mantine/core';
 import { IconEye, IconEyeOff } from '@tabler/icons-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, Navigate } from 'react-router-dom';
 import styles from '../styles/LoginPage.module.css';
 import { gql, useMutation } from '@apollo/client';
 import { useState } from 'react';
@@ -27,10 +27,13 @@ type LoginFormValues = {
 };
 
 export default function LoginPage() {
+  const { user, login } = useAuth();
+
+  if (user) return <Navigate to="/products" />;
+
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const { login } = useAuth();
 
   const form = useForm<LoginFormValues>({
     initialValues: { handle: '', password: '' },
