@@ -12,14 +12,35 @@ type UserType {
   address: String
 }
 
+type ProductType {
+  id: Int!
+  name: String!
+  description: String
+  price: Float!
+  rent: Float!
+  rent_type: RentType!
+  is_available: Boolean!
+}
+
+enum RentType {
+  HOURLY
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
 type Query {
   user(id: Int!): UserType
   users: [UserType!]!
+  product(id: Int!): ProductType
+  productsByOwnerId(ownerId: Int!): [ProductType!]!
+  products: [ProductType!]!
 }
 
 type Mutation {
   register(input: RegisterInput!): UserType!
   login(input: LoginInput!): UserType!
+  createProduct(ownerId: Int!, input: CreateProductInput!): ProductType!
 }
 
 input RegisterInput {
@@ -34,4 +55,14 @@ input RegisterInput {
 input LoginInput {
   handle: String!
   password: String!
+}
+
+input CreateProductInput {
+  name: String!
+  description: String
+  price: Float!
+  rent: Float!
+  rent_type: RentType!
+  categoryIds: [Int!]!
+  imageUrls: [String!]
 }
