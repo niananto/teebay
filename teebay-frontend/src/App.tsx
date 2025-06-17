@@ -8,14 +8,16 @@ import EditProductPage from './pages/EditProductPage';
 import AddProductPage from './pages/AddProductPage';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { PublicRoute } from './auth/PublicRoute';
+import TopbarLayout from './components/TopbarLayout';
 import './App.css'
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
-      <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+      {/* <Route path="/" element={<LandingPage />} /> */}
+      <Route path="/" element={<TopbarLayout><LandingPage /></TopbarLayout>} />
+      <Route path="/login" element={<TopbarLayout><PublicRoute><LoginPage /></PublicRoute></TopbarLayout>} />
+      <Route path="/register" element={<TopbarLayout><PublicRoute><RegisterPage /></PublicRoute></TopbarLayout>} />
       <Route path="/products" element={<ProtectedRoute><ProductListPage /></ProtectedRoute>} />
       <Route path="/products/:id" element={<ProtectedRoute><ProductDetailsPage /></ProtectedRoute>} />
       <Route path="/products/:id/edit" element={<ProtectedRoute><EditProductPage /></ProtectedRoute>} />
