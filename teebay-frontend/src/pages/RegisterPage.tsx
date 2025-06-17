@@ -38,8 +38,6 @@ export default function RegisterPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const togglePassword = () => setShowPassword((v) => !v);
-  const toggleConfirmPassword = () => setShowConfirmPassword((v) => !v);
 
   const handleSubmit = async (values: RegisterFormValues) => {
     console.log('Submitting registration with values:', values);
