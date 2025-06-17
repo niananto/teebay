@@ -50,8 +50,8 @@ model Product {
   categories   Category[]
   images       ProductImage[]
   transactions Transaction[]
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  created      DateTime       @default(now())
+  updated      DateTime       @updatedAt
 }
 
 model Category {
