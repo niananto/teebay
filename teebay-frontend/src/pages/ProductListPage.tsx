@@ -10,8 +10,11 @@ import {
 import ProductCard from '../components/ProductCard';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
 
 export default function ProductListPage() {
+  const { logout } = useAuth();
+
   const [page, setPage] = useState(1);
   const limit = 5;
 
@@ -40,7 +43,9 @@ export default function ProductListPage() {
   return (
     <Container size="lg" className="product-container">
       <div className="header">
-        <Button color="red" size="xs">LOGOUT</Button>
+        <Button color="red" size="xs" onClick={logout}>
+          Logout
+        </Button>
       </div>
 
       <Title order={2} className="title">MY PRODUCTS</Title>
