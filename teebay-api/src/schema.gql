@@ -9,6 +9,7 @@ type UserType {
   username: String!
   phone: String!
   email: String!
+  address: String
 }
 
 type Query {
@@ -31,6 +32,6 @@ input RegisterInput {
 }
 
 input LoginInput {
-  phone: String!
+  handle: String!
   password: String!
 }
