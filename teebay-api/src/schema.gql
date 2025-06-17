@@ -41,6 +41,8 @@ type Mutation {
   register(input: RegisterInput!): UserType!
   login(input: LoginInput!): UserType!
   createProduct(ownerId: Int!, input: CreateProductInput!): ProductType!
+  updateProduct(id: Int!, input: UpdateProductInput!): ProductType!
+  deleteProduct(id: Int!): Boolean!
 }
 
 input RegisterInput {
@@ -64,5 +66,15 @@ input CreateProductInput {
   rent: Float!
   rent_type: RentType!
   categoryIds: [Int!]!
+  imageUrls: [String!]
+}
+
+input UpdateProductInput {
+  name: String
+  description: String
+  price: Float
+  rent: Float
+  rent_type: RentType
+  categoryIds: [Int!]
   imageUrls: [String!]
 }

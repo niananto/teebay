@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductInput } from './dto/create-product.input';
+import { UpdateProductInput } from './dto/update-product.input';
 
 @Injectable()
 export class ProductService {
@@ -58,4 +59,40 @@ export class ProductService {
       },
     });
   }
+
+  async update(id: number, input: UpdateProductInput) {
+    return this.prisma.product.update({
+      where: { id },
+      data: {
+        name: input.name,
+        description: input.description,
+        price: input.price,
+        rent: input.rent,
+        rent_type: input.rent_type,
+        categories: input.categoryIds
+          ? {
+              set: input.categoryIds.map((id) => ({ id })),
+            }
+          : undefined,
+        images: input.imageUrls
+          ? {
+              deleteMany: {}, // delete existing
+              create: input.imageUrls.map((url) => ({ url })),
+            }
+          : undefined,
+      },
+      include: {
+        categories: true,
+        images: true,
+      },
+    });
+  }
+
+  async delete(id: number) {
+    await this.prisma.productImage.deleteMany({ where: { product_id: id } });
+    return this.prisma.product.delete({
+      where: { id },
+    });
+  }
+
 }
