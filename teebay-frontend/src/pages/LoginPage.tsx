@@ -1,40 +1,53 @@
 import { useForm } from '@mantine/form';
-import { Button, TextInput } from '@mantine/core';
+import { Button, TextInput, Text, ActionIcon } from '@mantine/core';
+import { IconEye, IconEyeOff } from '@tabler/icons-react';
 import { useNavigate, Link } from 'react-router-dom';
 import styles from '../styles/LoginPage.module.css';
-// import { gql, useMutation } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
+import { useState } from 'react';
 
-// const LOGIN = gql`
-//   mutation Login($data: AuthInput!) {
-//     login(data: $data) {
-//       success
-//       user { id name }
-//     }
-//   }
-// `;
+const LOGIN = gql`
+  mutation Login($handle: String!, $password: String!) {
+    login(input: { handle: $handle, password: $password }) {
+      id
+      first_name
+      last_name
+      username
+      phone
+      email
+      address
+    }
+  }
+`;
 
 type LoginFormValues = {
-  email: string;
+  handle: string;
   password: string;
 };
 
 export default function LoginPage() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const form = useForm<LoginFormValues>({
-    initialValues: { email: '', password: '' },
+    initialValues: { handle: '', password: '' },
   });
 
-//   const [validateLogin] = useMutation(LOGIN);
+  const [validateLogin, { loading }] = useMutation(LOGIN);
 
   const handleSubmit = async (values: LoginFormValues) => {
-    console.log('Submitting login with values:', values);
-    // const res = await validateLogin({ variables: { data: values } });
-    // console.log(res.data.login.user);    
-    // localStorage.setItem('user', JSON.stringify(res.data.login.user));
-    localStorage.setItem('user', JSON.stringify({ id: '1', name: 'Test User' })); // Mock user data for demo
-    // redirect to home page or dashboard
-    navigate('/');
+    setErrorMessage('');
+    try {
+      const res = await validateLogin({
+        variables: { handle: values.handle, password: values.password },
+      });
+      console.log('Login response:', res);
+      localStorage.setItem('teebay-user-id', JSON.stringify(res.data.login.id));
+      navigate('/');
+    } catch (error: any) {
+      setErrorMessage(`Login failed: ${error.message || 'Unknown error'}`);
+    }
   };
 
   return (
@@ -44,25 +57,38 @@ export default function LoginPage() {
 
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <TextInput
-            placeholder="Email"
+            placeholder="Email/Username/Phone"
             className={styles.input}
-            {...form.getInputProps('email')}
+            {...form.getInputProps('handle')}
             required
           />
+
           <TextInput
             placeholder="Password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             className={styles.input}
+            rightSection={
+              <ActionIcon onClick={() => setShowPassword((prev) => !prev)}>
+                {showPassword ? <IconEyeOff size="1rem" /> : <IconEye size="1rem" />}
+              </ActionIcon>
+            }
             {...form.getInputProps('password')}
             required
           />
-          <Button type="submit" className={styles.button}>
+
+          {errorMessage && (
+            <Text color="red" size="sm" mt="sm">
+              {errorMessage}
+            </Text>
+          )}
+
+          <Button type="submit" className={styles.button} loading={loading}>
             LOGIN
           </Button>
         </form>
 
         <div className={styles.linkText}>
-          Don&apos;t have an account? <Link to='/register'>Signup</Link>
+          Don&apos;t have an account? <Link to="/register">Signup</Link>
         </div>
       </div>
     </div>
