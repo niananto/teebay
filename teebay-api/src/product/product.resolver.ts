@@ -3,6 +3,7 @@ import { ProductService } from './product.service';
 import { ProductType } from './dto/product.type';
 import { CreateProductInput } from './dto/create-product.input';
 import { UpdateProductInput } from './dto/update-product.input';
+import { ProductPaginatedType } from './dto/product-paginated.type';
 
 @Resolver(() => ProductType)
 export class ProductResolver {
@@ -18,9 +19,12 @@ export class ProductResolver {
     return this.productService.findAllByOwnerId(ownerId);
   }
 
-  @Query(() => [ProductType])
-  async products() {
-    return this.productService.findAll();
+  @Query(() => ProductPaginatedType)
+  async products(
+    @Args('page', { type: () => Int, nullable: true }) page = 1,
+    @Args('limit', { type: () => Int, nullable: true }) limit = 10,
+  ) {
+    return this.productService.findAll({ page, limit });
   }
 
   @Mutation(() => ProductType)

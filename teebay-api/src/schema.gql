@@ -29,12 +29,19 @@ enum RentType {
   MONTHLY
 }
 
+type ProductPaginatedType {
+  products: [ProductType!]!
+  total: Int!
+  page: Int!
+  totalPages: Int!
+}
+
 type Query {
   user(id: Int!): UserType
   users: [UserType!]!
   product(id: Int!): ProductType
   productsByOwnerId(ownerId: Int!): [ProductType!]!
-  products: [ProductType!]!
+  products(page: Int, limit: Int): ProductPaginatedType!
 }
 
 type Mutation {

@@ -31,14 +31,31 @@ export class ProductService {
     });
   }
 
-  async findAll() {
-    return this.prisma.product.findMany({
-      include: {
-        categories: true,
-        images: true,
-      },
-    });
+  async findAll({ page = 1, limit = 10 }: { page: number; limit: number }) {
+    const skip = (page - 1) * limit;
+
+    const [products, total] = await this.prisma.$transaction([
+      this.prisma.product.findMany({
+        skip,
+        take: limit,
+        include: {
+          categories: true,
+          images: true,
+          owner: true,
+        },
+        orderBy: { created: 'desc' },
+      }),
+      this.prisma.product.count(),
+    ]);
+
+    return {
+      products,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
   }
+
 
   async findById(id: number) {
     return this.prisma.product.findUnique({
