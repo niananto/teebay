@@ -5,6 +5,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import styles from '../styles/LoginPage.module.css';
 import { gql, useMutation } from '@apollo/client';
 import { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 const LOGIN = gql`
   mutation Login($handle: String!, $password: String!) {
@@ -29,6 +30,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const { login } = useAuth();
 
   const form = useForm<LoginFormValues>({
     initialValues: { handle: '', password: '' },
@@ -42,9 +44,9 @@ export default function LoginPage() {
       const res = await validateLogin({
         variables: { handle: values.handle, password: values.password },
       });
-      console.log('Login response:', res);
-      localStorage.setItem('teebay-user-id', JSON.stringify(res.data.login.id));
-      navigate('/');
+      const user = res.data.login;
+      login({ id: user.id, username: user.username });
+      navigate('/products');
     } catch (error: any) {
       setErrorMessage(`Login failed: ${error.message || 'Unknown error'}`);
     }

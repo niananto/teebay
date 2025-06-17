@@ -5,6 +5,7 @@ import App from './App.tsx'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'  
 import { BrowserRouter } from 'react-router-dom'
 import { MantineProvider } from '@mantine/core'
+import { AuthProvider } from './contexts/AuthContext.tsx'
 import '@mantine/core/styles.css';
 
 const client = new ApolloClient({
@@ -17,7 +18,9 @@ createRoot(document.getElementById('root')!).render(
     <ApolloProvider client={client}>
       <BrowserRouter>
         <MantineProvider>
-          <App />
+          <AuthProvider>
+            <App />
+          </AuthProvider>
         </MantineProvider>
       </BrowserRouter>
     </ApolloProvider>
