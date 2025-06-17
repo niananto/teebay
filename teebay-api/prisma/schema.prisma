@@ -13,3 +13,106 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Auth {
+  user_id            Int      @id
+  user               User     @relation(fields: [user_id], references: [id])
+  encrypted_password String
+  created            DateTime @default(now())
+  modified           DateTime @updatedAt
+}
+
+model User {
+  id                    Int           @id @default(autoincrement())
+  first_name            String
+  last_name             String
+  address               String?
+  username              String        @unique
+  phone                 String        @unique
+  email                 String        @unique
+  auth                  Auth?
+  products              Product[]     @relation("UserOwnerOfProduct")
+  owner_transactions    Transaction[] @relation("UserOwnerOfTransaction")
+  receiver_transactions Transaction[] @relation("UserReceiverOfTransaction")
+  created               DateTime      @default(now())
+  modified              DateTime      @updatedAt
+}
+
+model Product {
+  id           Int            @id @default(autoincrement())
+  name         String
+  description  String?
+  price        Float
+  rent         Float
+  rent_type    RentType       @default(HOURLY)
+  is_available Boolean        @default(true)
+  owner        User           @relation("UserOwnerOfProduct", fields: [owner_id], references: [id])
+  owner_id     Int
+  categories   Category[]
+  images       ProductImage[]
+  transactions Transaction[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  products Product[]
+  created  DateTime  @default(now())
+  updated  DateTime  @updatedAt
+}
+
+model ProductImage {
+  id         Int     @id @default(autoincrement())
+  url        String
+  product_id Int
+  product    Product @relation(fields: [product_id], references: [id])
+}
+
+model Transaction {
+  id               Int              @id @default(autoincrement())
+  trx_id           String           @unique @default(cuid())
+  product_id       Int
+  product          Product          @relation(fields: [product_id], references: [id])
+  owner_id         Int
+  owner            User             @relation("UserOwnerOfTransaction", fields: [owner_id], references: [id])
+  receiver_id      Int
+  receiver         User             @relation("UserReceiverOfTransaction", fields: [receiver_id], references: [id])
+  type             TransactionType
+  buy_transaction  BuyTransaction?
+  rent_transaction RentTransaction?
+  created          DateTime         @default(now())
+  modified         DateTime         @updatedAt
+}
+
+model BuyTransaction {
+  transaction_id Int         @id
+  transaction    Transaction @relation(fields: [transaction_id], references: [id])
+  price          Float
+  created        DateTime    @default(now())
+  modified       DateTime    @updatedAt
+}
+
+model RentTransaction {
+  transaction_id Int         @id
+  transaction    Transaction @relation(fields: [transaction_id], references: [id])
+  rent           Float
+  rent_type      RentType
+  rent_start     DateTime
+  rent_end       DateTime
+  created        DateTime    @default(now())
+  modified       DateTime    @updatedAt
+}
+
+enum RentType {
+  HOURLY
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum TransactionType {
+  BUY
+  RENT
+}
