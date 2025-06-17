@@ -1,9 +1,6 @@
 import { useForm } from '@mantine/form';
-import {
-  TextInput,
-  Button,
-  Box
-} from '@mantine/core';
+import { IconEye, IconEyeOff } from '@tabler/icons-react';
+import { ActionIcon, TextInput, Button, Box } from '@mantine/core';
 import { useState } from 'react';
 import styles from '../styles/RegisterPage.module.css';
 import { useNavigate, Link } from 'react-router-dom';
@@ -40,7 +37,9 @@ export default function RegisterPage() {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const togglePassword = () => setShowPassword((v) => !v);
+  const toggleConfirmPassword = () => setShowConfirmPassword((v) => !v);
 
   const handleSubmit = async (values: RegisterFormValues) => {
     console.log('Submitting registration with values:', values);
@@ -83,39 +82,35 @@ export default function RegisterPage() {
             />
           </div>
           <div className={styles.input}>
-            <div className={styles.passwordWrapper}>
-              <TextInput
-                placeholder="Password"
-                type={showPassword ? 'text' : 'password'}
-                className={styles.passwordInput}
-                {...form.getInputProps('password')}
-              />
-              <button
-                type="button"
-                onClick={togglePassword}
-                className={styles.toggleButton}
-              >
-                {showPassword ? 'Hide' : 'Show'}
-              </button>
-            </div>
+            <TextInput
+              placeholder="Password"
+              type={showPassword ? 'text' : 'password'}
+              className={styles.passwordInput}
+              {...form.getInputProps('password')}
+              rightSection={
+                <ActionIcon onClick={() => setShowPassword((prev) => !prev)} variant="transparent">
+                  {showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
+                </ActionIcon>
+              }
+              required
+            />
           </div>
+
           <div className={styles.input}>
-            <div className={styles.passwordWrapper}>
-              <TextInput
-                placeholder="Confirm Password"
-                type={showPassword ? 'text' : 'password'}
-                className={styles.passwordInput}
-                {...form.getInputProps('confirmPassword')}
-              />
-              <button
-                type="button"
-                onClick={togglePassword}
-                className={styles.toggleButton}
-              >
-                {showPassword ? 'Hide' : 'Show'}
-              </button>
-            </div>
+            <TextInput
+              placeholder="Confirm Password"
+              type={showConfirmPassword ? 'text' : 'password'}
+              className={styles.passwordInput}
+              {...form.getInputProps('confirmPassword')}
+              rightSection={
+                <ActionIcon onClick={() => setShowConfirmPassword((prev) => !prev)} variant="transparent">
+                  {showConfirmPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
+                </ActionIcon>
+              }
+              required
+            />
           </div>
+
           <Button type="submit" className={styles.button}>
             REGISTER
           </Button>

@@ -73,7 +73,7 @@ export default function LoginPage() {
             type={showPassword ? 'text' : 'password'}
             className={styles.input}
             rightSection={
-              <ActionIcon onClick={() => setShowPassword((prev) => !prev)}>
+              <ActionIcon onClick={() => setShowPassword((prev) => !prev)} variant='transparent'>
                 {showPassword ? <IconEyeOff size="1rem" /> : <IconEye size="1rem" />}
               </ActionIcon>
             }
