@@ -14,6 +14,11 @@ export const GET_PRODUCTS = gql`
           rent
           rent_type
           is_available
+          created
+          categories {
+              id
+              name
+          }
       }
     }
   }

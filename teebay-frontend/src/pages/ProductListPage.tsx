@@ -52,8 +52,7 @@ export default function ProductListPage() {
                 rent={p.rent}
                 rentType={p.rent_type}
                 description={p.description}
-                createdAt={p.createdAt}
-                views={p.views}
+                created={p.created}
               />
             </Link>
           </div>
