@@ -1,5 +1,6 @@
 import { Card, Title, Text, Divider, Group } from '@mantine/core';
 import './ProductCard.css';
+import { formatDate } from '../utils/utils';
 
 interface Category {
   id: number;
@@ -18,12 +19,6 @@ interface ProductCardProps {
 
 export default function ProductCard({ name, categories, price, rent, rentType, description, created }: ProductCardProps) {
 
-  const formattedDate = new Date(created).toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
-
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder className="product-card">
       <Title order={4} className="product-name">{name}</Title>
@@ -41,7 +36,20 @@ export default function ProductCard({ name, categories, price, rent, rentType, d
       <Text size="sm" className="price-line">
         Price: <span className="price">${price}</span> | Rent:{" "}
         <span className="rent">
-          {rentType === 'daily' ? `$${rent}/day` : `$${rent}/hour`}
+          {(() => {
+            switch (rentType?.toLowerCase()) {
+              case 'hourly':
+                return `$${rent}/hour`;
+              case 'daily':
+                return `$${rent}/day`;
+              case 'weekly':
+                return `$${rent}/week`;
+              case 'monthly':
+                return `$${rent}/month`;
+              default:
+                return `$${rent}`;
+            }
+          })()}
         </span>
       </Text>
 
@@ -52,7 +60,7 @@ export default function ProductCard({ name, categories, price, rent, rentType, d
       <Divider my="sm" />
 
       <Group justify="space-between" gap="xs">
-        <Text size="xs" color="gray">Date posted: {formattedDate}</Text>
+        <Text size="xs" color="gray">Date posted: {formatDate(created)}</Text>
       </Group>
     </Card>
   );
