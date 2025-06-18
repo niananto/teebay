@@ -11,12 +11,28 @@ import {
   FileInput,
   Image,
   LoadingOverlay,
+  NumberInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useProductDetails } from '../hooks/useProductDetails';
 import { useCategories } from '../hooks/useCategories';
 import { useEffect } from 'react';
+import { gql, useMutation } from '@apollo/client';
+
+const UPDATE_PRODUCT = gql`
+  mutation UpdateProduct($id: Int!, $input: UpdateProductInput!) {
+    updateProduct(id: $id, input: $input) {
+      id
+      name
+      description
+      price
+      rent
+      rent_type
+      is_available
+    }
+  }
+`;
 
 export default function EditProductPage() {
   const { id } = useParams<{ id: string }>();
@@ -41,19 +57,39 @@ export default function EditProductPage() {
     validate: {
       name: (value) => (value.trim() === '' ? 'Title is required' : null),
       categoryIds: (value) => (value.length === 0 ? 'Select at least one category' : null),
-      price: (value) => (value.trim() === '' ? 'Price is required' : null),
+      price: (value) => (value <= 0 ? 'Price must be greater than 0' : null),
       rent: (value) => (value <= 0 ? 'Rent must be greater than 0' : null),
       rentType: (value) => (value === '' ? 'Rent type is required' : null),
     },
   });
 
-  const handleSubmit = (values: typeof form.values) => {
-    console.log('Edit submitted:', {
-      ...values,
-      price: parseFloat(values.price),
+  const [updateProduct, { loading: updating, error: updateError }] = useMutation(UPDATE_PRODUCT);
+  const navigate = useNavigate();
+  
+  const handleSubmit = async (values: typeof form.values) => {
+    await updateProduct({
+      variables: {
+        id: productId,
+        input: {
+          name: values.name,
+          description: values.description,
+          price: values.price,
+          rent: values.rent,
+          rent_type: values.rentType,
+          categoryIds: values.categoryIds.map(Number),
+          imageUrls: [],
+        },
+      },
     });
 
-    // TODO: send mutation to backend
+    if (updateError) {
+      console.error('Update failed:', updateError);
+    } else {
+      // Optionally, redirect or show success message
+      console.log('Product updated successfully');
+      // You can use a router to redirect or show a success notification
+      navigate(`/products/${productId}`);
+    }
   };
 
   if (loading || loadingCategories) {
@@ -92,13 +128,17 @@ export default function EditProductPage() {
           />
 
           <Group grow>
-            <TextInput
+            <NumberInput
               label="Price"
+              min={0}
+              prefix="$"
               placeholder="e.g. 1000"
               {...form.getInputProps('price')}
             />
-            <TextInput
+            <NumberInput
               label="Rent"
+              min={0}
+              prefix="$"
               placeholder="e.g. 50"
               {...form.getInputProps('rent')}
             />
@@ -134,7 +174,7 @@ export default function EditProductPage() {
             {...form.getInputProps('imageFiles')}
           />
 
-          <Button type="submit" color="violet" mt="sm" fullWidth>
+          <Button type="submit" color="violet" mt="sm" fullWidth loading={updating}>
             Update
           </Button>
         </Stack>
