@@ -10,40 +10,77 @@ import {
   Title,
   Flex,
   Text,
+  FileInput,
+  LoadingOverlay
 } from '@mantine/core';
-import { useState } from 'react';
+import { useForm } from '@mantine/form';
+import { useEffect, useState } from 'react';
+import { useCategories } from '../hooks/useCategories';
+import { useRentTypes } from '../hooks/useRentTypes';
 
-const steps = ['Title', 'Categories', 'Description', 'Price', 'Summary'];
+const steps = ['Title', 'Categories', 'Description', 'Price', 'Images', 'Summary'];
 
 export default function AddProductPage() {
   const [step, setStep] = useState(0);
-  const [formData, setFormData] = useState({
-    title: '',
-    categories: [] as string[],
-    description: '',
-    price: '',
-    rent: 0,
-    rentType: '',
+
+  const { fetchCategories, categories: categoryOptions, loading: loadingCategories } = useCategories();
+  const { fetchRentTypes, rentTypes: rentTypeOptions, loading: loadingRentTypes } = useRentTypes();
+
+  useEffect(() => {
+    fetchCategories();
+    fetchRentTypes();
+  }, []);
+
+  const form = useForm({
+    initialValues: {
+      name: '',
+      categoryIds: [] as string[],
+      description: '',
+      price: 0,
+      rent: 0,
+      rentType: rentTypeOptions.length > 0 ? rentTypeOptions[0].value : '',
+      imageFiles: [] as File[],
+    },
+
+    validate: {
+      name: (value) => (value.trim() === '' ? 'Title is required' : null),
+      categoryIds: (value) => (value.length === 0 ? 'Select at least one category' : null),
+      price: (value) => (value <= 0 ? 'Price must be greater than 0' : null),
+      rent: (value) => (value <= 0 ? 'Rent must be greater than 0' : null),
+      rentType: (value) => (value === '' ? 'Rent type is required' : null),
+    },
   });
 
   const nextStep = () => setStep((s) => Math.min(s + 1, steps.length - 1));
   const prevStep = () => setStep((s) => Math.max(s - 1, 0));
 
-  const updateForm = (key: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [key]: value }));
+  const validateStep = () => {
+    switch (step) {
+      case 0:
+        return form.validateField('name').hasError === false;
+      case 1:
+        return form.validateField('categoryIds').hasError === false;
+      case 3:
+        return !form.validateField('price').hasError &&
+              !form.validateField('rent').hasError &&
+              !form.validateField('rentType').hasError;
+      default:
+        return true;
+    }
   };
 
+
   return (
-    <Container size="xs" py="xl">
-      <Title order={3} ta="center" mb="lg">Create product</Title>
+    <Container size="xs" py="xl" pos="relative">
+      <LoadingOverlay visible={loadingCategories || loadingRentTypes} />
+      <Title order={3} ta="center" mb="lg">Adding New Product</Title>
 
       {step === 0 && (
         <Stack>
-          <Title order={5} ta="center">Select a title for your product</Title>
+          <Title order={5} ta="center">Set a title for your product</Title>
           <TextInput
             placeholder="Product title"
-            value={formData.title}
-            onChange={(e) => updateForm('title', e.currentTarget.value)}
+            {...form.getInputProps('name')}
           />
         </Stack>
       )}
@@ -52,10 +89,9 @@ export default function AddProductPage() {
         <Stack>
           <Title order={5} ta="center">Select categories</Title>
           <MultiSelect
-            data={['Electronics', 'Toys', 'Furniture']}
+            data={categoryOptions}
             placeholder="Select categories"
-            value={formData.categories}
-            onChange={(val) => updateForm('categories', val)}
+            {...form.getInputProps('categoryIds')}
           />
           <Text fz="xs" c="dimmed" ta="center">
             NOTE: This is a multi-select dropdown
@@ -65,41 +101,38 @@ export default function AddProductPage() {
 
       {step === 2 && (
         <Stack>
-          <Title order={5} ta="center">Select description</Title>
+          <Title order={5} ta="center">Write a description</Title>
           <Textarea
             placeholder="Product description"
-            value={formData.description}
-            onChange={(e) => updateForm('description', e.currentTarget.value)}
             minRows={4}
+            resize='vertical'
+            {...form.getInputProps('description')}
           />
         </Stack>
       )}
 
       {step === 3 && (
         <Stack>
-          <Title order={5} ta="center">Select price</Title>
-          <TextInput
+          <Title order={5} ta="center">Enter Selling Price, Renting Price and Renting Type</Title>
+          <NumberInput
             placeholder="Purchase price"
-            value={formData.price}
-            onChange={(e) => updateForm('price', e.currentTarget.value)}
+            min={0}
+            prefix="$"
+            {...form.getInputProps('price')}
           />
           <Flex gap="md" direction="row" wrap="wrap">
             <NumberInput
               placeholder="Rent price"
-              value={formData.rent}
-              onChange={(val) => updateForm('rent', val ?? 0)}
               min={0}
               prefix="$"
+              style={{ flex: 1 }}
+              {...form.getInputProps('rent')}
             />
             <Select
               placeholder="Select rent type"
-              data={[
-                { value: 'per_hour', label: 'Per Hour' },
-                { value: 'per_day', label: 'Per Day' },
-                { value: 'per_week', label: 'Per Week' },
-              ]}
-              value={formData.rentType}
-              onChange={(val) => updateForm('rentType', val || '')}
+              data={rentTypeOptions}
+              style={{ flex: 1 }}
+              {...form.getInputProps('rentType')}
             />
           </Flex>
         </Stack>
@@ -107,26 +140,64 @@ export default function AddProductPage() {
 
       {step === 4 && (
         <Stack>
-          <Title order={5} ta="center">Summary</Title>
-          <Text><strong>Title:</strong> {formData.title}</Text>
-          <Text><strong>Categories:</strong> {formData.categories.join(', ')}</Text>
-          <Text><strong>Description:</strong> {formData.description}</Text>
-          <Text>
-            <strong>Price:</strong> ${formData.price}, Rent: ${formData.rent} {formData.rentType.replace('_', ' ')}
+          <Title order={5} ta="center">Upload Product Images</Title>
+          <FileInput
+            placeholder="Choose files"
+            multiple
+            accept="image/*"
+            {...form.getInputProps('imageFiles')}
+          />
+          <Text fz="xs" c="dimmed" ta="center">
+            NOTE: You can upload multiple images (optional)
           </Text>
+        </Stack>
+      )}
+
+      {step === 5 && (
+        <Stack>
+          <Title order={5} ta="center">Summary</Title>
+          <Text><strong>Title:</strong> {form.values.name}</Text>
+          <Text>
+            <strong>Categories:</strong>{' '}
+            {categoryOptions
+              .filter((c: { value: string; label: string }) => form.values.categoryIds.includes(c.value))
+              .map((c: { value: string; label: string }) => c.label)
+              .join(', ')
+            }
+          </Text>
+          <Text><strong>Description:</strong> {form.values.description}</Text>
+          <Text>
+            <strong>Price:</strong> ${form.values.price}, Rent: ${form.values.rent} {form.values.rentType.replace('_', ' ')}
+          </Text>
+          <Text><strong>Images:</strong> {form.values.imageFiles.length} file(s) selected</Text>
         </Stack>
       )}
 
       <Flex justify="center" mt="xl" gap="md">
         {step > 0 && <Button variant="default" onClick={prevStep}>Back</Button>}
-        {step < steps.length - 1 ? (
-          <Button onClick={nextStep}>Next</Button>
+
+        {(step === 2 || step === 4) ? (
+          <>
+            <Button variant="light" onClick={nextStep}>Skip</Button>
+            <Button onClick={() => {
+              if (validateStep()) nextStep();
+            }}>
+              Next
+            </Button>
+          </>
+        ) : step < steps.length - 1 ? (
+          <Button onClick={() => {
+            if (validateStep()) nextStep();
+          }}>
+            Next
+          </Button>
         ) : (
-          <Button color="green" onClick={() => console.log('Submitted:', formData)}>
+          <Button color="green" onClick={() => console.log('Submitted:', form.values)}>
             Submit
           </Button>
         )}
       </Flex>
+
     </Container>
   );
 }
