@@ -12,6 +12,11 @@ type UserType {
   address: String
 }
 
+type CategoryType {
+  id: Int!
+  name: String!
+}
+
 type ProductType {
   id: Int!
   name: String!
@@ -20,6 +25,8 @@ type ProductType {
   rent: Float!
   rent_type: RentType!
   is_available: Boolean!
+  created: DateTime!
+  categories: [CategoryType!]!
 }
 
 enum RentType {
@@ -29,16 +36,16 @@ enum RentType {
   MONTHLY
 }
 
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type ProductPaginatedType {
   products: [ProductType!]!
   total: Int!
   page: Int!
   totalPages: Int!
-}
-
-type CategoryType {
-  id: Int!
-  name: String!
 }
 
 type Query {
