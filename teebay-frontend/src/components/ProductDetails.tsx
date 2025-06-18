@@ -33,7 +33,6 @@ export default function ProductDetails({ name, categories, price, rent, rent_typ
             ))}
           </Text>
           <Text size="sm" c="blue">
-            Price: ${price}
             Price: <span className="price">${price}</span> | Rent:{" "}
             <span className="rent">
               {(() => {

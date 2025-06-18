@@ -34,22 +34,22 @@ export default function ProductListPage() {
   const [deleteProduct, { loading: deleting }] = useMutation(DELETE_PRODUCT);
 
   const handleConfirmDelete = async () => {
-  if (selectedProductId == null) return;
+    if (selectedProductId == null) return;
 
-  try {
-    await deleteProduct({ variables: { id: selectedProductId } });
+    try {
+      await deleteProduct({ variables: { id: selectedProductId } });
 
-    // Optional: show success message or toast here
-    // Refetch product list or remove from local state if you're caching manually
-    // For now, a simple window reload or refetchProducts() can work:
-    window.location.reload(); // or trigger useProductList() to refetch
+      // Optional: show success message or toast here
+      // Refetch product list or remove from local state if you're caching manually
+      // For now, a simple window reload or refetchProducts() can work:
+      window.location.reload(); // or trigger useProductList() to refetch
 
-    setDeleteModalOpen(false);
-  } catch (err) {
-    console.error('Failed to delete product:', err);
-    // Optionally show an error toast
-  }
-};
+      setDeleteModalOpen(false);
+    } catch (err) {
+      console.error('Failed to delete product:', err);
+      // Optionally show an error toast
+    }
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Something went wrong</div>;
