@@ -1,20 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useProductList } from '../hooks/useProductList';
-import {
-  Container,
-  Title,
-  Button,
-  Text,
-  Stack,
-} from '@mantine/core';
+import { Container, Title, Button, Text, Stack, Group } from '@mantine/core';
 import ProductCard from '../components/ProductCard';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../auth/AuthContext';
+import '../styles/ProductListPage.css';
+import { IconTrash } from '@tabler/icons-react';
 
 export default function ProductListPage() {
-  const { logout } = useAuth();
-
   const [page, setPage] = useState(1);
   const limit = 5;
 
@@ -42,34 +35,28 @@ export default function ProductListPage() {
 
   return (
     <Container size="lg" className="product-container">
-      <div className="header">
-        <Button color="red" size="xs" onClick={logout}>
-          Logout
-        </Button>
-      </div>
-
       <Title order={2} className="title">MY PRODUCTS</Title>
 
       <Stack gap="lg">
         {products.map((p: any) => (
-          <React.Fragment key={p.id}>
-            <ProductCard
-              name={p.name}
-              categories={p.categories}
-              price={p.price}
-              rent={p.rent}
-              rentType={p.rent_type}
-              description={p.description}
-              createdAt={p.createdAt}
-              views={p.views}
-            />
-            <Link to={`/products/${p.id}`}>
-              <Button color="blue" size="xs">View Product</Button>
+          <div className="product-wrapper" key={p.id}>
+            <div className="delete-icon" onClick={() => openDeleteModal(p.id)}>
+              <IconTrash size={18} color="red" />
+            </div>
+
+            <Link to={`/products/${p.id}`} className="card-link">
+              <ProductCard
+                name={p.name}
+                categories={p.categories}
+                price={p.price}
+                rent={p.rent}
+                rentType={p.rent_type}
+                description={p.description}
+                createdAt={p.createdAt}
+                views={p.views}
+              />
             </Link>
-            <Button color="red" size="xs" onClick={() => openDeleteModal(p.id)}>
-              Delete Product
-            </Button>
-          </React.Fragment>
+          </div>
         ))}
       </Stack>
 
@@ -79,17 +66,11 @@ export default function ProductListPage() {
         onConfirm={handleConfirmDelete}
       />
 
-      <div className="pagination">
+      <Group justify="center" mt="lg">
         <Button onClick={handlePrev} disabled={page === 1}>Previous</Button>
         <Text>Page {page}</Text>
         <Button onClick={handleNext} disabled={products.length < limit}>Next</Button>
-      </div>
-
-      <div className="footer">
-        <Link to="/products/add">
-          <Button color="green">Add New Product</Button>
-        </Link>
-      </div>
+      </Group>
     </Container>
   );
 }
