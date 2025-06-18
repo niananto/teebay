@@ -6,6 +6,13 @@ import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import { Link } from 'react-router-dom';
 import '../styles/ProductListPage.css';
 import { IconTrash } from '@tabler/icons-react';
+import { gql, useMutation } from '@apollo/client';
+
+const DELETE_PRODUCT = gql`
+  mutation DeleteProduct($id: Int!) {
+    deleteProduct(id: $id)
+  }
+`;
 
 export default function ProductListPage() {
   const [page, setPage] = useState(1);
@@ -16,9 +23,6 @@ export default function ProductListPage() {
   const handleNext = () => setPage((prev) => prev + 1);
   const handlePrev = () => setPage((prev) => Math.max(prev - 1, 1));
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Something went wrong</div>;
-
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
 
@@ -27,11 +31,28 @@ export default function ProductListPage() {
     setDeleteModalOpen(true);
   };
 
-  const handleConfirmDelete = () => {
-    console.log(`Delete product ${selectedProductId}`);
+  const [deleteProduct, { loading: deleting }] = useMutation(DELETE_PRODUCT);
+
+  const handleConfirmDelete = async () => {
+  if (selectedProductId == null) return;
+
+  try {
+    await deleteProduct({ variables: { id: selectedProductId } });
+
+    // Optional: show success message or toast here
+    // Refetch product list or remove from local state if you're caching manually
+    // For now, a simple window reload or refetchProducts() can work:
+    window.location.reload(); // or trigger useProductList() to refetch
+
     setDeleteModalOpen(false);
-    // will be triggerring mutation here
-  };
+  } catch (err) {
+    console.error('Failed to delete product:', err);
+    // Optionally show an error toast
+  }
+};
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Something went wrong</div>;
 
   return (
     <Container size="lg" className="product-container">
