@@ -3,3 +3,4 @@
 3. Sidebar for dashboard
 4. Profile Picture
 5. Product Images
+6. Profile page

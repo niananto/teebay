@@ -17,12 +17,26 @@ import { useForm } from '@mantine/form';
 import { useEffect, useState } from 'react';
 import { useCategories } from '../hooks/useCategories';
 import { useRentTypes } from '../hooks/useRentTypes';
+import { gql, useMutation } from '@apollo/client';
+import { useAuth } from '../auth/AuthContext';
+
+const ADD_PRODUCT = gql`
+  mutation CreateProduct($ownerId: Int!, $input: CreateProductInput!) {
+    createProduct(ownerId: $ownerId, input: $input) {
+      id
+      name
+      description
+      price
+      rent
+      rent_type
+      is_available
+    }
+  }
+`;
 
 const steps = ['Title', 'Categories', 'Description', 'Price', 'Images', 'Summary'];
 
 export default function AddProductPage() {
-  const [step, setStep] = useState(0);
-
   const { fetchCategories, categories: categoryOptions, loading: loadingCategories } = useCategories();
   const { fetchRentTypes, rentTypes: rentTypeOptions, loading: loadingRentTypes } = useRentTypes();
 
@@ -51,6 +65,41 @@ export default function AddProductPage() {
     },
   });
 
+  const { user } = useAuth();
+  if (!user) {
+    return <Text color="red">You must be logged in to add a product.</Text>;
+  }
+  const [addProduct, { loading: submitting, error: submitError }] = useMutation(ADD_PRODUCT);
+
+  const handleSubmit = async (values: typeof form.values) => {
+    const valid = form.validate();
+
+    if (!valid.hasErrors) {
+      try {
+        const response = await addProduct({
+          variables: {
+            ownerId: user.id,
+            input: {
+              name: form.values.name,
+              description: form.values.description,
+              price: values.price,
+              rent: form.values.rent,
+              rent_type: form.values.rentType,
+              categoryIds: form.values.categoryIds.map((id) => parseInt(id, 10)),
+              imageUrls: [], // handle image uploads separately
+            },
+          },
+        });
+
+        console.log('Product created:', response.data.createProduct);
+        
+      } catch (err) {
+        console.error('Submission failed:', err);
+      }
+    }
+  };
+
+  const [step, setStep] = useState(0);
   const nextStep = () => setStep((s) => Math.min(s + 1, steps.length - 1));
   const prevStep = () => setStep((s) => Math.max(s - 1, 0));
 
@@ -192,9 +241,13 @@ export default function AddProductPage() {
             Next
           </Button>
         ) : (
-          <Button color="green" onClick={() => console.log('Submitted:', form.values)}>
-            Submit
-          </Button>
+          <>
+            <Button color="green" onClick={() => {handleSubmit(form.values);}}>
+              Submit
+            </Button>
+            {submitting && <Text c="dimmed">Submitting...</Text>}
+            {submitError && <Text c="red">{submitError.message}</Text>}
+          </>
         )}
       </Flex>
 
