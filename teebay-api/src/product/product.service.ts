@@ -112,4 +112,10 @@ export class ProductService {
     });
   }
 
+  async getAllCategories() {
+    return this.prisma.category.findMany({
+      orderBy: { name: 'asc' },
+    });
+  }
+
 }

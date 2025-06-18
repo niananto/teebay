@@ -4,6 +4,8 @@ import { ProductType } from './dto/product.type';
 import { CreateProductInput } from './dto/create-product.input';
 import { UpdateProductInput } from './dto/update-product.input';
 import { ProductPaginatedType } from './dto/product-paginated.type';
+import { CategoryType } from './dto/category.type';
+import { RentType } from '@prisma/client';
 
 @Resolver(() => ProductType)
 export class ProductResolver {
@@ -47,6 +49,16 @@ export class ProductResolver {
   async deleteProduct(@Args('id', { type: () => Int }) id: number) {
     await this.productService.delete(id);
     return true;
+  }
+
+  @Query(() => [CategoryType])
+  async categories() {
+    return this.productService.getAllCategories();
+  }
+
+  @Query(() => [RentType])
+  rentTypes(): RentType[] {
+    return Object.values(RentType);
   }
 
 }
