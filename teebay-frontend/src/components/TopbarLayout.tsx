@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
-import { Button, Group } from '@mantine/core';
+import { Button, Group, Menu } from '@mantine/core';
 import type { ReactNode } from 'react';
 
 export default function TopbarLayout({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <>
@@ -24,9 +24,50 @@ export default function TopbarLayout({ children }: { children: ReactNode }) {
 
         <Group gap="md">
           {user ? (
-            <Link to="/products">
-              <Button variant="outline">Dashboard</Button>
-            </Link>
+            <>
+              <Link to="/products">
+                <Button variant="subtle">All Products</Button>
+              </Link>
+              <Link to="/products/add">
+                <Button variant="subtle">Add Product</Button>
+              </Link>
+              <Menu shadow="md" width={160}>
+                <Menu.Target>
+                    <Button
+                    variant="subtle"
+                    leftSection={
+                      <img
+                      src={user.profilePicture || '/default-avatar.png'}
+                      alt="Profile"
+                      style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover', }}
+                      />
+                    }
+                    rightSection={
+                      <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      style={{ display: 'block' }}
+                      >
+                      <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    }
+                    >
+                    {user.username}
+                    </Button>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <Menu.Item component={Link} to="/profile">
+                  Profile
+                  </Menu.Item>
+                  <Menu.Item color="red" onClick={logout}>
+                  Logout
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            </>
           ) : (
             <>
               <Link to="/register">

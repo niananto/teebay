@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 type User = {
   id: number;
   username: string;
+  profilePicture?: string;
 };
 
 type AuthContextType = {

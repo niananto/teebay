@@ -13,16 +13,17 @@ import './App.css'
 
 export default function App() {
   return (
-    <Routes>
-      {/* <Route path="/" element={<LandingPage />} /> */}
-      <Route path="/" element={<TopbarLayout><LandingPage /></TopbarLayout>} />
-      <Route path="/login" element={<TopbarLayout><PublicRoute><LoginPage /></PublicRoute></TopbarLayout>} />
-      <Route path="/register" element={<TopbarLayout><PublicRoute><RegisterPage /></PublicRoute></TopbarLayout>} />
-      <Route path="/products" element={<ProtectedRoute><ProductListPage /></ProtectedRoute>} />
-      <Route path="/products/:id" element={<ProtectedRoute><ProductDetailsPage /></ProtectedRoute>} />
-      <Route path="/products/:id/edit" element={<ProtectedRoute><EditProductPage /></ProtectedRoute>} />
-      <Route path="/products/add" element={<ProtectedRoute><AddProductPage /></ProtectedRoute>} />
-      <Route path="*" element={<div>404 Not Found</div>} />
-    </Routes>
+    <TopbarLayout>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+        <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+        <Route path="/products" element={<ProtectedRoute><ProductListPage /></ProtectedRoute>} />
+        <Route path="/products/:id" element={<ProtectedRoute><ProductDetailsPage /></ProtectedRoute>} />
+        <Route path="/products/:id/edit" element={<ProtectedRoute><EditProductPage /></ProtectedRoute>} />
+        <Route path="/products/add" element={<ProtectedRoute><AddProductPage /></ProtectedRoute>} />
+        <Route path="*" element={<div>404 Not Found</div>} />
+      </Routes>
+    </TopbarLayout>
   );
 }
