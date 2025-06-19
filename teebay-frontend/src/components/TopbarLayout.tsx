@@ -26,7 +26,7 @@ export default function TopbarLayout({ children }: { children: ReactNode }) {
           {user ? (
             <>
               <Link to="/products">
-                <Button variant="subtle">All Products</Button>
+                <Button variant="subtle">My Products</Button>
               </Link>
               <Link to="/products/add">
                 <Button variant="subtle">Add Product</Button>

@@ -3,5 +3,6 @@
 3. Sidebar for dashboard
 4. Profile Picture
 5. Product Images
-6. Profile page
+6. Profile Edit
 7. Show meaningful errors everywhere
+8. Filter

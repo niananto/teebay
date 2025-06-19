@@ -2,7 +2,7 @@ import {useQuery, gql} from '@apollo/client';
 
 export const GET_PRODUCTS = gql`
   query ProductsByOwnerId($ownerId: Int!, $page: Int!, $limit: Int!) {
-    productsByOwnerId(ownerId: $ownerId, page: $page, limit: $limit) {
+    ownedProducts(ownerId: $ownerId, page: $page, limit: $limit) {
       total
       page
       totalPages
@@ -35,8 +35,8 @@ export const useOwnedProductList = ({ ownerId, page, limit }: UseOwnedProductLis
       variables: { ownerId, page, limit },
   });
   return {
-      products: data?.productsByOwnerId?.products || [],
-      totalPages: data?.productsByOwnerId?.totalPages || 0,
+      products: data?.ownedProducts?.products || [],
+      totalPages: data?.ownedProducts?.totalPages || 0,
       loading,
       error,
   };
