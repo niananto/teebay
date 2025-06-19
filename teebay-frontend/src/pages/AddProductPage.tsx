@@ -19,6 +19,7 @@ import { useCategories } from '../hooks/useCategories';
 import { useRentTypes } from '../hooks/useRentTypes';
 import { gql, useMutation } from '@apollo/client';
 import { useAuth } from '../auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const ADD_PRODUCT = gql`
   mutation CreateProduct($ownerId: Int!, $input: CreateProductInput!) {
@@ -30,6 +31,12 @@ const ADD_PRODUCT = gql`
       rent
       rent_type
       is_available
+      owner_id
+      created
+      categories {
+          id
+          name
+      }
     }
   }
 `;
@@ -37,6 +44,8 @@ const ADD_PRODUCT = gql`
 const steps = ['Title', 'Categories', 'Description', 'Price', 'Images', 'Summary'];
 
 export default function AddProductPage() {
+  const navigate = useNavigate();
+
   const { fetchCategories, categories: categoryOptions, loading: loadingCategories } = useCategories();
   const { fetchRentTypes, rentTypes: rentTypeOptions, loading: loadingRentTypes } = useRentTypes();
 
@@ -69,7 +78,47 @@ export default function AddProductPage() {
   if (!user) {
     return <Text color="red">You must be logged in to add a product.</Text>;
   }
-  const [addProduct, { loading: submitting, error: submitError }] = useMutation(ADD_PRODUCT);
+  const [addProduct, { loading: submitting, error: submitError }] = useMutation(ADD_PRODUCT, {
+    update(cache, { data: { createProduct } }) {
+      cache.modify({
+        fields: {
+          ownedProducts(existingOwnedProducts = {}, { args }) {
+            const newProductRef = cache.writeFragment({
+              data: createProduct,
+              fragment: gql`
+                fragment NewProduct on Product {
+                  id
+                  name
+                  description
+                  price
+                  rent
+                  rent_type
+                  is_available
+                  owner_id
+                  created
+                  categories {
+                    id
+                    name
+                  }
+                }
+              `,
+            });
+
+            const existingProducts = existingOwnedProducts.products || [];
+            const newTotal = (existingOwnedProducts.total || 0) + 1;
+            const limit = args?.limit || 5; // fallback to 5 if not found
+
+            return {
+              ...existingOwnedProducts,
+              total: newTotal,
+              totalPages: Math.ceil(newTotal / limit),
+              products: [newProductRef, ...existingProducts],
+            };
+          },
+        },
+      });
+    }
+  });
 
   const handleSubmit = async (values: typeof form.values) => {
     const valid = form.validate();
@@ -92,7 +141,7 @@ export default function AddProductPage() {
         });
 
         console.log('Product created:', response.data.createProduct);
-        
+        navigate('/products');
       } catch (err) {
         console.error('Submission failed:', err);
       }
