@@ -6,3 +6,4 @@
 6. Profile Edit
 7. Show meaningful errors everywhere
 8. Filter
+9. Seed or Start Fresh both

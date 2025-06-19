@@ -1,6 +1,6 @@
 import {useQuery, gql} from '@apollo/client';
 
-export const GET_PRODUCTS = gql`
+const GET_OWNED_PRODUCTS = gql`
   query ProductsByOwnerId($ownerId: Int!, $page: Int!, $limit: Int!) {
     ownedProducts(ownerId: $ownerId, page: $page, limit: $limit) {
       total
@@ -31,7 +31,7 @@ interface UseOwnedProductListParams {
 }
 
 export const useOwnedProductList = ({ ownerId, page, limit }: UseOwnedProductListParams) => {
-  const { data, loading, error } = useQuery(GET_PRODUCTS, {
+  const { data, loading, error } = useQuery(GET_OWNED_PRODUCTS, {
       variables: { ownerId, page, limit },
   });
   return {
