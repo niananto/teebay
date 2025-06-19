@@ -1,5 +1,5 @@
 import { InputType, Field, Float, Int } from '@nestjs/graphql';
-import { RentType } from './enums';
+import { RentType } from '../../common/enums';
 import { IsNotEmpty, IsOptional, IsArray } from 'class-validator';
 
 @InputType()

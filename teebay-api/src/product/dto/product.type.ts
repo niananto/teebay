@@ -1,5 +1,5 @@
 import { ObjectType, Field, Float, Int } from '@nestjs/graphql';
-import { RentType } from './enums';
+import { RentType } from '../../common/enums';
 import { CategoryType } from './category.type';
 
 @ObjectType()

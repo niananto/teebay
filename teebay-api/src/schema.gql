@@ -49,6 +49,41 @@ type ProductPaginatedType {
   totalPages: Int!
 }
 
+type BuyTransaction {
+  transaction_id: Int!
+  price: Int!
+  created: DateTime!
+  modified: DateTime!
+}
+
+type RentTransaction {
+  transaction_id: Int!
+  rent: Int!
+  rent_type: RentType!
+  rent_start: DateTime!
+  rent_end: DateTime!
+  created: DateTime!
+  modified: DateTime!
+}
+
+type TransactionDetailsType {
+  id: Int!
+  trx_id: String!
+  product_id: Int!
+  owner_id: Int!
+  receiver_id: Int!
+  type: TransactionType!
+  buy_transaction: BuyTransaction
+  rent_transaction: RentTransaction
+  created: DateTime!
+  modified: DateTime!
+}
+
+enum TransactionType {
+  BUY
+  RENT
+}
+
 type Query {
   user(id: Int!): UserType
   users: [UserType!]!
@@ -58,6 +93,7 @@ type Query {
   products(page: Int, limit: Int): ProductPaginatedType!
   categories: [CategoryType!]!
   rentTypes: [RentType!]!
+  myTransactions(userId: Int!): [TransactionDetailsType!]!
 }
 
 type Mutation {
