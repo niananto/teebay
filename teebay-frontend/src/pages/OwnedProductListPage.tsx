@@ -15,7 +15,7 @@ const DELETE_PRODUCT = gql`
   }
 `;
 
-export default function ProductListPage() {
+export default function OwnedProductListPage() {
   const { user } = useAuth();
   const [page, setPage] = useState(1);
   const limit = 5;

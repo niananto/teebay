@@ -22,11 +22,14 @@ export default function TopbarLayout({ children }: { children: ReactNode }) {
           <img src="/teebay.png" alt="Teebay logo" style={{ height: '40px' }} />
         </Link>
 
-        <Group gap="md">
+        <Group gap="sm">
           {user ? (
             <>
               <Link to="/products">
                 <Button variant="subtle">My Products</Button>
+              </Link>
+              <Link to="/products/browse">
+                <Button variant="subtle">Browse Products</Button>
               </Link>
               <Link to="/products/add">
                 <Button variant="subtle">Add Product</Button>

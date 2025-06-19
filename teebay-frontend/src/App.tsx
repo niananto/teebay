@@ -2,11 +2,12 @@ import { Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import ProductListPage from './pages/OwnedProductListPage';
+import OwnedProductListPage from './pages/OwnedProductListPage';
 import ProductDetailsPage from './pages/ProductDetailsPage';
 import EditProductPage from './pages/EditProductPage';
 import AddProductPage from './pages/AddProductPage';
 import ProfilePage from './pages/ProfilePage';
+import OthersProductListPage from './pages/OthersProductListPage';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { PublicRoute } from './auth/PublicRoute';
 import TopbarLayout from './components/TopbarLayout';
@@ -19,11 +20,12 @@ export default function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
-        <Route path="/products" element={<ProtectedRoute><ProductListPage /></ProtectedRoute>} />
+        <Route path="/products" element={<ProtectedRoute><OwnedProductListPage /></ProtectedRoute>} />
         <Route path="/products/:id" element={<ProtectedRoute><ProductDetailsPage /></ProtectedRoute>} />
         <Route path="/products/:id/edit" element={<ProtectedRoute><EditProductPage /></ProtectedRoute>} />
         <Route path="/products/add" element={<ProtectedRoute><AddProductPage /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+        <Route path="/products/browse" element={<ProtectedRoute><OthersProductListPage /></ProtectedRoute>} />
         <Route path="*" element={<div>404 Not Found</div>} />
       </Routes>
     </TopbarLayout>
