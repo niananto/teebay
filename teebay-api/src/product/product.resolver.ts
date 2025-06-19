@@ -16,9 +16,13 @@ export class ProductResolver {
     return this.productService.findById(id);
   }
 
-  @Query(() => [ProductType])
-  async productsByOwnerId(@Args('ownerId', { type: () => Int }) ownerId: number) {
-    return this.productService.findAllByOwnerId(ownerId);
+  @Query(() => ProductPaginatedType)
+  async productsByOwnerId(
+    @Args('ownerId', { type: () => Int }) ownerId: number,
+    @Args('page', { type: () => Int, nullable: true }) page = 1,
+    @Args('limit', { type: () => Int, nullable: true }) limit = 10,
+  ) {
+    return this.productService.findAllByOwnerId(ownerId, page, limit);
   }
 
   @Query(() => ProductPaginatedType)

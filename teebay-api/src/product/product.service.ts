@@ -67,14 +67,29 @@ export class ProductService {
     });
   }
 
-  async findAllByOwnerId(ownerId: number) {
-    return this.prisma.product.findMany({
-      where: { owner_id: ownerId },
-      include: {
-        categories: true,
-        images: true,
-      },
-    });
+  async findAllByOwnerId(ownerId: number, page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+
+    const [products, total] = await this.prisma.$transaction([
+      this.prisma.product.findMany({
+        where: { owner_id: ownerId },
+        skip,
+        take: limit,
+        include: {
+          categories: true,
+          images: true,
+        },
+        orderBy: { created: 'desc' },
+      }),
+      this.prisma.product.count({ where: { owner_id: ownerId } }),
+    ]);
+
+    return {
+      products,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async update(id: number, input: UpdateProductInput) {

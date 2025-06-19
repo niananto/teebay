@@ -52,7 +52,7 @@ type Query {
   user(id: Int!): UserType
   users: [UserType!]!
   product(id: Int!): ProductType
-  productsByOwnerId(ownerId: Int!): [ProductType!]!
+  productsByOwnerId(ownerId: Int!, page: Int, limit: Int): ProductPaginatedType!
   products(page: Int, limit: Int): ProductPaginatedType!
   categories: [CategoryType!]!
   rentTypes: [RentType!]!
