@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useProductList } from '../hooks/useProductList';
+import { useOwnedProductList } from '../hooks/useOwnedProductList';
 import { Container, Title, Button, Text, Stack, Group } from '@mantine/core';
 import ProductCard from '../components/ProductCard';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import '../styles/ProductListPage.css';
 import { IconTrash } from '@tabler/icons-react';
 import { gql, useMutation } from '@apollo/client';
+import { useAuth } from '../auth/AuthContext';
 
 const DELETE_PRODUCT = gql`
   mutation DeleteProduct($id: Int!) {
@@ -15,10 +16,11 @@ const DELETE_PRODUCT = gql`
 `;
 
 export default function ProductListPage() {
+  const { user } = useAuth();
   const [page, setPage] = useState(1);
   const limit = 5;
 
-  const { products, loading, error } = useProductList({ page, limit });
+  const { products, loading, error } = useOwnedProductList({ ownerId: user?.id || -1, page, limit });
 
   const handleNext = () => setPage((prev) => prev + 1);
   const handlePrev = () => setPage((prev) => Math.max(prev - 1, 1));
