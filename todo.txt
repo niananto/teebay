@@ -4,3 +4,4 @@
 4. Profile Picture
 5. Product Images
 6. Profile page
+7. Show meaningful errors everywhere

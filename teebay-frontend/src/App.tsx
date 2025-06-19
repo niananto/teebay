@@ -6,6 +6,7 @@ import ProductListPage from './pages/OwnedProductListPage';
 import ProductDetailsPage from './pages/ProductDetailsPage';
 import EditProductPage from './pages/EditProductPage';
 import AddProductPage from './pages/AddProductPage';
+import ProfilePage from './pages/ProfilePage';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { PublicRoute } from './auth/PublicRoute';
 import TopbarLayout from './components/TopbarLayout';
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/products/:id" element={<ProtectedRoute><ProductDetailsPage /></ProtectedRoute>} />
         <Route path="/products/:id/edit" element={<ProtectedRoute><EditProductPage /></ProtectedRoute>} />
         <Route path="/products/add" element={<ProtectedRoute><AddProductPage /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         <Route path="*" element={<div>404 Not Found</div>} />
       </Routes>
     </TopbarLayout>
