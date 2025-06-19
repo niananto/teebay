@@ -12,4 +12,14 @@ export class TransactionResolver {
   myTransactions(@Args('userId', { type: () => Int }) userId: number) {
     return this.transactionService.getUserTransactions(userId);
   }
+
+  @Mutation(() => TransactionDetailsType)
+  buy(@Args('buyInput') buyInput: BuyInput) {
+    return this.transactionService.buy(buyInput);
+  }
+
+  @Mutation(() => TransactionDetailsType)
+  rent(@Args('rentInput') rentInput: RentInput) {
+    return this.transactionService.rent(rentInput);
+  }
 }

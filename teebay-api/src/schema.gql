@@ -102,6 +102,8 @@ type Mutation {
   createProduct(ownerId: Int!, input: CreateProductInput!): ProductType!
   updateProduct(id: Int!, input: UpdateProductInput!): ProductType!
   deleteProduct(id: Int!): Boolean!
+  buy(buyInput: BuyInput!): TransactionDetailsType!
+  rent(rentInput: RentInput!): TransactionDetailsType!
 }
 
 input RegisterInput {
@@ -136,4 +138,16 @@ input UpdateProductInput {
   rent_type: RentType
   categoryIds: [Int!]
   imageUrls: [String!]
+}
+
+input BuyInput {
+  product_id: Int!
+  receiver_id: Int!
+}
+
+input RentInput {
+  product_id: Int!
+  receiver_id: Int!
+  rent_start: DateTime!
+  rent_end: DateTime!
 }
