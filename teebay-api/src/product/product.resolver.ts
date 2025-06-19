@@ -17,12 +17,21 @@ export class ProductResolver {
   }
 
   @Query(() => ProductPaginatedType)
-  async productsByOwnerId(
+  async ownedProducts(
     @Args('ownerId', { type: () => Int }) ownerId: number,
     @Args('page', { type: () => Int, nullable: true }) page = 1,
     @Args('limit', { type: () => Int, nullable: true }) limit = 10,
   ) {
     return this.productService.findAllByOwnerId(ownerId, page, limit);
+  }
+
+  @Query(() => ProductPaginatedType)
+  async othersProducts(
+    @Args('ownerId', { type: () => Int }) ownerId: number,
+    @Args('page', { type: () => Int, nullable: true }) page = 1,
+    @Args('limit', { type: () => Int, nullable: true }) limit = 10,
+  ) {
+    return this.productService.findAllOthersByOwnerId(ownerId, page, limit);
   }
 
   @Query(() => ProductPaginatedType)

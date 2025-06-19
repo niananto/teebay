@@ -92,6 +92,30 @@ export class ProductService {
     };
   }
 
+  async findAllOthersByOwnerId(ownerId: number, page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+
+    const [products, total] = await this.prisma.$transaction([
+      this.prisma.product.findMany({
+        where: { owner_id: { not: ownerId } },
+        skip,
+        take: limit,
+        include: {
+          categories: true,
+          images: true,
+        },
+        orderBy: { created: 'desc' },
+      }),
+      this.prisma.product.count({ where: { owner_id: { not: ownerId } } }),
+    ]);
+    return {
+      products,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
   async update(id: number, input: UpdateProductInput) {
     return this.prisma.product.update({
       where: { id },
