@@ -25,6 +25,7 @@ type ProductType {
   rent: Float!
   rent_type: RentType!
   is_available: Boolean!
+  owner_id: Int!
   created: DateTime!
   categories: [CategoryType!]!
 }

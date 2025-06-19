@@ -25,6 +25,9 @@ export class ProductType {
   @Field()
   is_available: boolean;
 
+  @Field(() => Int)
+  owner_id: number;
+
   @Field()
   created: Date;
 
