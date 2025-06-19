@@ -4,10 +4,22 @@ import { ActionIcon, TextInput, Button, Box } from '@mantine/core';
 import { useState } from 'react';
 import styles from '../styles/RegisterPage.module.css';
 import { useNavigate, Link } from 'react-router-dom';
+import { gql, useMutation } from '@apollo/client';
+
+const REGISTER = gql`
+  mutation Register($input: RegisterInput!) {
+    register(input: $input) {
+      id
+      username
+      email
+    }
+  }
+`;
 
 type RegisterFormValues = {
   firstName: string;
   lastName: string;
+  username: string;
   address: string;
   email: string;
   phone: string;
@@ -22,13 +34,13 @@ export default function RegisterPage() {
     initialValues: {
       firstName: '',
       lastName: '',
+      username: '',
       address: '',
       email: '',
       phone: '',
       password: '',
       confirmPassword: '',
     },
-
     validate: {
       email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
       confirmPassword: (value, values) =>
@@ -39,9 +51,27 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const [register] = useMutation(REGISTER);
+
   const handleSubmit = async (values: RegisterFormValues) => {
-    console.log('Submitting registration with values:', values);
-    navigate('/login'); // Redirect to login page after registration
+    try {
+      const { data } = await register({
+        variables: {
+          input: {
+            first_name: values.firstName,
+            last_name: values.lastName,
+            username: values.username,
+            phone: values.phone,
+            email: values.email,
+            password: values.password,
+          },
+        },
+      });
+      console.log('Registration success:', data);
+      navigate('/login');
+    } catch (err) {
+      console.error('Registration failed:', err);
+    }
   };
 
   return (
@@ -61,17 +91,26 @@ export default function RegisterPage() {
               {...form.getInputProps('lastName')}
             />
           </div>
+
           <div className={styles.input}>
             <TextInput
               placeholder="Address"
               {...form.getInputProps('address')}
             />
           </div>
-          <div className={styles.row}>
+
+          <div className={styles.input}>
             <TextInput
               placeholder="Email"
-              className={styles.inputHalf}
               {...form.getInputProps('email')}
+            />
+          </div>
+
+          <div className={styles.row}>
+            <TextInput
+              placeholder="Username"
+              className={styles.inputHalf}
+              {...form.getInputProps('username')}
             />
             <TextInput
               placeholder="Phone Number"
@@ -79,6 +118,7 @@ export default function RegisterPage() {
               {...form.getInputProps('phone')}
             />
           </div>
+
           <div className={styles.input}>
             <TextInput
               placeholder="Password"
