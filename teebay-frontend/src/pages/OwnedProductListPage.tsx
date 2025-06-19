@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useOwnedProductList } from '../hooks/useOwnedProductList';
 import { Container, Title, Button, Text, Stack, Group } from '@mantine/core';
 import ProductCard from '../components/ProductCard';
-import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
+import ConfirmationModal from '../components/ConfirmationModal';
 import { Link } from 'react-router-dom';
 import '../styles/ProductListPage.css';
 import { IconTrash } from '@tabler/icons-react';
@@ -82,10 +82,11 @@ export default function OwnedProductListPage() {
         ))}
       </Stack>
 
-      <DeleteConfirmationModal
+      <ConfirmationModal
         opened={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
+        message="Are you sure you want to delete this product?"
       />
 
       <Group justify="center" mt="lg">

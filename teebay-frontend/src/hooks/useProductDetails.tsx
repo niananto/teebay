@@ -10,6 +10,7 @@ export const GET_PRODUCT = gql`
       rent
       rent_type
       is_available
+      owner_id
       created
       categories {
           id

@@ -19,7 +19,6 @@ export default function OthersProductListPage() {
   const limit = 5;
 
   const { products, loading, error } = useOthersProductList({ ownerId: user?.id || -1, page, limit });
-  console.log('Products:', products);
 
   const handleNext = () => setPage((prev) => prev + 1);
   const handlePrev = () => setPage((prev) => Math.max(prev - 1, 1));
