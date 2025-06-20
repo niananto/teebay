@@ -1,4 +1,4 @@
-import { Card, Title, Text, Divider, Group, Stack, Image, Flex } from '@mantine/core';
+import { Card, Title, Text, Divider, Group, Image } from '@mantine/core';
 import './ProductCard.css';
 import { formatDate } from '../utils/utils';
 import { useProfileDetails } from '../hooks/useProfileDetails';

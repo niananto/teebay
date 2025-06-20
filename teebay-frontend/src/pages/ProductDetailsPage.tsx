@@ -54,7 +54,7 @@ export default function ProductDetailsPage() {
   const { product, loading, error, refetch } = useProductDetails(productId);
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [deleteProduct, { loading: deleting }] = useMutation(DELETE_PRODUCT);
+  const [deleteProduct ] = useMutation(DELETE_PRODUCT);
 
   const handleConfirmDelete = async () => {
     try {

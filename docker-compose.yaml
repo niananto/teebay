@@ -1,27 +1,45 @@
-# Use postgres/example user/password credentials
-
 services:
-
   db:
     image: postgres:15
     restart: always
-    # set shared memory limit when using docker compose
     shm_size: 128mb
-    # or set shared memory limit when deploy via swarm stack
-    #volumes:
-    #  - type: tmpfs
-    #    target: /dev/shm
-    #    tmpfs:
-    #      size: 134217728 # 128*2^20 bytes = 128Mb
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_USER: teebay-api
       POSTGRES_PASSWORD: 123456789
       POSTGRES_DB: teebay
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql@15/data
 
   db-client:
     image: adminer
     restart: always
     ports:
-      - 8080:8080
+      - "8080:8080"
+
+  backend:
+    build:
+      context: ./teebay-api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # DATABASE_URL: postgres://teebay-api:123456789@172.17.0.1:5432/teebay
+      DATABASE_URL: postgres://teebay-api:123456789@host.docker.internal:5432/teebay
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./teebay-frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

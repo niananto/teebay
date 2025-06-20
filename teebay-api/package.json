@@ -20,7 +20,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "generate": "prisma generate",
     "migrate": "prisma migrate dev && prisma generate",
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts",
+    "seed:prod": "node dist/prisma/seed.js",
+    "start:prod:init": "npx prisma generate && npx prisma migrate deploy && node dist/prisma/seed.js && node dist/src/main"
   },
   "dependencies": {
     "@nestjs/apollo": "^13.1.0",
@@ -31,6 +33,7 @@
     "@prisma/client": "^6.9.0",
     "bcrypt": "^6.0.0",
     "class-validator": "^0.14.2",
+    "dotenv": "^16.5.0",
     "graphql": "^16.11.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"

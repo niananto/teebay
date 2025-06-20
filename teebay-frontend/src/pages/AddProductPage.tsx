@@ -82,7 +82,7 @@ export default function AddProductPage() {
     update(cache, { data: { createProduct } }) {
       cache.modify({
         fields: {
-          ownedProducts(existingOwnedProducts = {}, { args }) {
+          ownedProducts(existingOwnedProducts = {}, modifierDetails) {
             const newProductRef = cache.writeFragment({
               data: createProduct,
               fragment: gql`
@@ -106,7 +106,15 @@ export default function AddProductPage() {
 
             const existingProducts = existingOwnedProducts.products || [];
             const newTotal = (existingOwnedProducts.total || 0) + 1;
-            const limit = args?.limit || 5; // fallback to 5 if not found
+
+            // Try to extract limit from the storeFieldName string, fallback to 5
+            let limit = 5;
+            if (modifierDetails && typeof modifierDetails.storeFieldName === 'string') {
+              const match = modifierDetails.storeFieldName.match(/limit:(\d+)/);
+              if (match) {
+                limit = parseInt(match[1], 10);
+              }
+            }
 
             return {
               ...existingOwnedProducts,

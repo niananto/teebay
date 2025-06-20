@@ -33,7 +33,7 @@ export default function OwnedProductListPage() {
     setDeleteModalOpen(true);
   };
 
-  const [deleteProduct, { loading: deleting }] = useMutation(DELETE_PRODUCT);
+  const [deleteProduct] = useMutation(DELETE_PRODUCT);
 
   const handleConfirmDelete = async () => {
     if (selectedProductId == null) return;
