@@ -1,6 +1,7 @@
 import { Card, Title, Text, Divider, Group, Stack, Image, Flex } from '@mantine/core';
 import './ProductCard.css';
 import { formatDate } from '../utils/utils';
+import { useProfileDetails } from '../hooks/useProfileDetails';
 
 interface Category {
   id: number;
@@ -10,6 +11,7 @@ interface Category {
 interface ProductCardProps {
   name: string;
   categories: Category[];
+  ownerId?: number;
   price: number;
   rent: number;
   rentType: string;
@@ -18,7 +20,11 @@ interface ProductCardProps {
   thumbnailUrl?: string;
 }
 
-export default function ProductCard({ name, categories, price, rent, rentType, description, created, thumbnailUrl = 'https://picsum.photos/200' }: ProductCardProps) {
+export default function ProductCard({ name, categories, ownerId, price, rent, rentType, description, created, thumbnailUrl = 'https://picsum.photos/200' }: ProductCardProps) {
+  const handleFetchProfile = (ownerId: number) => {
+    return useProfileDetails(ownerId);
+  }
+
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder className="product-card">
       <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
@@ -72,6 +78,9 @@ export default function ProductCard({ name, categories, price, rent, rentType, d
 
       <Group justify="space-between" gap="xs">
         <Text size="xs" color="gray">Date posted: {formatDate(created)}</Text>
+        <Text size="xs" color="gray" className="owner-id">
+          {ownerId ? `Owned by: ${handleFetchProfile(ownerId).user?.username || 'Unknown'}` : ''}
+        </Text>
       </Group>
     </Card>
 

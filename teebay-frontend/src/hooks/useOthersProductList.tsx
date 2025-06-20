@@ -13,6 +13,7 @@ const GET_OTHERS_PRODUCTS = gql`
         price
         rent
         rent_type
+        owner_id
         is_available
         created
         categories {
@@ -24,13 +25,13 @@ const GET_OTHERS_PRODUCTS = gql`
   }
 `;
 
-interface UseOwnedProductListParams {
+interface UseOthersProductListParams {
   ownerId: number;
   page: number;
   limit: number;
 }
 
-export const useOthersProductList = ({ ownerId, page, limit }: UseOwnedProductListParams) => {
+export const useOthersProductList = ({ ownerId, page, limit }: UseOthersProductListParams) => {
   const { data, loading, error } = useQuery(GET_OTHERS_PRODUCTS, {
       variables: { ownerId, page, limit },
   });

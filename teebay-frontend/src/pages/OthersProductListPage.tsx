@@ -41,6 +41,7 @@ export default function OthersProductListPage() {
               rentType={p.rent_type}
               description={p.description}
               created={p.created}
+              ownerId={p.owner_id}
             />
           </Link>
         ))}
