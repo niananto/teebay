@@ -16,13 +16,12 @@ Before diving into database or backend logic, I started by scaffolding the front
 
 - Used Mantine components for clean and responsive UI.
 - Hooked up simple form states and validations using Mantine's form hooks.
-- **Hardship**: Initially attempted to over-engineer authentication, but reverted to string-matching as allowed.
+- **Hardship**: Initially attempted to over-engineer authentication using JWT, but reverted to a simpler version (still very secure) as there was little time.
 
 Once the UI was satisfactory, I moved to backend setup.
 
 ### 🧱 Database Design and Backend Setup
 
-- Chose PostgreSQL as the DB and Prisma for schema management and migrations.
 - Defined models: `User`, `Auth`, `Product`, `Category`, `Transaction`, and `Image`.
 - Implemented relations and used enums for transaction types (`BUY`, `RENT`).
 
@@ -59,8 +58,8 @@ Once the UI was satisfactory, I moved to backend setup.
 ### 🔵 Part 3: Buy and Rent Workflow
 
 - Implemented `buyProduct` and `rentProduct` mutations.
-- Buy marks product as unavailable and updates ownership.
-- Rent stores the rental window and shows product as unavailable.
+<!-- - Buy marks product as unavailable and updates ownership.
+- Rent stores the rental window and shows product as unavailable. -->
 
 - Designed modals: 
   - **Buy modal**: Confirmation popup.
@@ -81,8 +80,6 @@ Once the UI was satisfactory, I moved to backend setup.
 - Dockerized the backend using multi-stage build.
 - Used local Postgres instance during development.
 - `.env` used for DATABASE_URL.
-
-**Reminder**: Comment/uncomment DATABASE_URL in `docker-compose.yaml` based on your setup.
 
 ---
 
