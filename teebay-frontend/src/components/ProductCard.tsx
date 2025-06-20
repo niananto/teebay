@@ -2,6 +2,7 @@ import { Card, Title, Text, Divider, Group, Stack, Image, Flex } from '@mantine/
 import './ProductCard.css';
 import { formatDate } from '../utils/utils';
 import { useProfileDetails } from '../hooks/useProfileDetails';
+import type { ReactNode } from 'react';
 
 interface Category {
   id: number;
@@ -18,9 +19,10 @@ interface ProductCardProps {
   description: string;
   created: string;
   thumbnailUrl?: string;
+  children?: ReactNode;
 }
 
-export default function ProductCard({ name, categories, ownerId, price, rent, rentType, description, created, thumbnailUrl = 'https://picsum.photos/200' }: ProductCardProps) {
+export default function ProductCard({ name, categories, ownerId, price, rent, rentType, description, created, thumbnailUrl = 'https://picsum.photos/200', children }: ProductCardProps) {
   const handleFetchProfile = (ownerId: number) => {
     return useProfileDetails(ownerId);
   }
@@ -78,6 +80,7 @@ export default function ProductCard({ name, categories, ownerId, price, rent, re
 
       <Group justify="space-between" gap="xs">
         <Text size="xs" color="gray">Date posted: {formatDate(created)}</Text>
+        {children && <>{children}</>}
         <Text size="xs" color="gray" className="owner-id">
           {ownerId ? `Owned by: ${handleFetchProfile(ownerId).user?.username || 'Unknown'}` : ''}
         </Text>

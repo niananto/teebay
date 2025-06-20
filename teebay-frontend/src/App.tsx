@@ -8,6 +8,7 @@ import EditProductPage from './pages/EditProductPage';
 import AddProductPage from './pages/AddProductPage';
 import ProfilePage from './pages/ProfilePage';
 import OthersProductListPage from './pages/OthersProductListPage';
+import TransactionHistoryPage from './pages/TransactionHistoryPage';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { PublicRoute } from './auth/PublicRoute';
 import TopbarLayout from './components/TopbarLayout';
@@ -26,6 +27,7 @@ export default function App() {
         <Route path="/products/add" element={<ProtectedRoute><AddProductPage /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         <Route path="/products/browse" element={<ProtectedRoute><OthersProductListPage /></ProtectedRoute>} />
+        <Route path="/transactions" element={<ProtectedRoute><TransactionHistoryPage /></ProtectedRoute>} />
         <Route path="*" element={<div>404 Not Found</div>} />
       </Routes>
     </TopbarLayout>

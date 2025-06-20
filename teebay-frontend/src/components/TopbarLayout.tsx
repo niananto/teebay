@@ -34,6 +34,9 @@ export default function TopbarLayout({ children }: { children: ReactNode }) {
               <Link to="/products/add">
                 <Button variant="subtle">Add Product</Button>
               </Link>
+              <Link to="/transactions">
+                <Button variant="subtle">Transactions</Button>
+              </Link>
               <Menu shadow="md" width={160}>
                 <Menu.Target>
                     <Button
