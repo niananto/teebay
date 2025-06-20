@@ -26,8 +26,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      # DATABASE_URL: postgres://teebay-api:123456789@172.17.0.1:5432/teebay
-      DATABASE_URL: postgres://teebay-api:123456789@host.docker.internal:5432/teebay
+      DATABASE_URL: postgres://teebay-api:123456789@db:5432/teebay
     depends_on:
       - db
 
