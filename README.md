@@ -94,7 +94,8 @@ teebay-api/             # NestJS GraphQL backend
 
 ## 📹 Loom Video
 
-> Include a Loom or screen-recording video here demonstrating the working features.
+📎 [Link](https://www.loom.com/share/cc2b55736bdf48cbbb9b66df7b2611a8)
+
 
 ---
 
