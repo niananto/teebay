@@ -84,6 +84,12 @@ enum TransactionType {
   RENT
 }
 
+type RentedProductType {
+  product: ProductType!
+  rent_start: DateTime!
+  rent_end: DateTime!
+}
+
 type Query {
   user(id: Int!): UserType
   users: [UserType!]!
@@ -94,6 +100,10 @@ type Query {
   categories: [CategoryType!]!
   rentTypes: [RentType!]!
   myTransactions(userId: Int!): [TransactionDetailsType!]!
+  boughtProducts(userId: Int!): [ProductType!]!
+  soldProducts(userId: Int!): [ProductType!]!
+  borrowedProducts(userId: Int!): [RentedProductType!]!
+  lentProducts(userId: Int!): [RentedProductType!]!
 }
 
 type Mutation {

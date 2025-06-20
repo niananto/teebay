@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { BuyInput } from './dto/buy.input';
 import { RentInput } from './dto/rent.input';
 import { TransactionType } from '@prisma/client';
+import { RentedProductType } from './dto/rentedProduct.type';
 
 @Injectable()
 export class TransactionService {
@@ -20,7 +21,6 @@ export class TransactionService {
     await this.prisma.product.update({
       where: { id: product.id },
       data: {
-        is_available: false,
         owner_id: input.receiver_id,
       },
     });
@@ -93,4 +93,87 @@ export class TransactionService {
       },
     });
   }
+
+  async getBoughtProducts(userId: number) {
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        type: TransactionType.BUY,
+        receiver_id: userId,
+      },
+      include: {
+        product: {
+          include: {
+            categories: true,
+            images: true,
+          },
+        },
+      },
+    });
+    return transactions.map((t) => t.product);
+  }
+
+  async getSoldProducts(userId: number) {
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        type: TransactionType.BUY,
+        owner_id: userId,
+      },
+      include: {
+        product: {
+          include: {
+            categories: true,
+            images: true,
+          },
+        },
+      },
+    });
+    return transactions.map((t) => t.product);
+  }
+
+  async getBorrowedProducts(userId: number) {
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        type: TransactionType.RENT,
+        receiver_id: userId,
+      },
+      include: {
+        product: {
+          include: {
+            categories: true,
+            images: true,
+          },
+        },
+        rent_transaction: true,
+      },
+    });
+    return transactions.map((t) => ({
+      product: t.product,
+      rent_start: t.rent_transaction?.rent_start,
+      rent_end: t.rent_transaction?.rent_end,
+    }));
+  }
+
+  async getLentProducts(userId: number) {
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        type: TransactionType.RENT,
+        owner_id: userId,
+      },
+      include: {
+        product: {
+          include: {
+            categories: true,
+            images: true,
+          },
+        },
+        rent_transaction: true,
+      },
+    });
+    return transactions.map((t) => ({
+      product: t.product,
+      rent_start: t.rent_transaction?.rent_start,
+      rent_end: t.rent_transaction?.rent_end,
+    }));
+  }
+
 }
