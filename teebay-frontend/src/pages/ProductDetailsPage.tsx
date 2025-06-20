@@ -2,7 +2,6 @@ import {
   Button,
   Group,
   Container,
-  Title,
 } from '@mantine/core';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useProductDetails } from '../hooks/useProductDetails';
@@ -20,15 +19,41 @@ const DELETE_PRODUCT = gql`
   }
 `;
 
+const BUY_PRODUCT = gql`
+  mutation Buy($productId: Int!, $receiverId: Int!) {
+    buy(buyInput: { product_id: $productId, receiver_id: $receiverId }) {
+      id
+      trx_id
+    }
+  }
+`;
+
+const RENT_PRODUCT = gql`
+  mutation Rent($productId: Int!, $receiverId: Int!, $rentStart: DateTime!, $rentEnd: DateTime!) {
+    rent(
+      rentInput: {
+        product_id: $productId
+        receiver_id: $receiverId
+        rent_start: $rentStart
+        rent_end: $rentEnd
+      }
+    ) {
+      id
+      trx_id
+    }
+  }
+`;
+
+
 export default function ProductDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const productId = Number(id);
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const { product, loading, error } = useProductDetails(productId);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const { product, loading, error, refetch } = useProductDetails(productId);
 
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteProduct, { loading: deleting }] = useMutation(DELETE_PRODUCT);
 
   const handleConfirmDelete = async () => {
@@ -43,16 +68,40 @@ export default function ProductDetailsPage() {
 
   const [buyModalOpen, setBuyModalOpen] = useState(false);
   const [rentModalOpen, setRentModalOpen] = useState(false);
+  const [buyProduct, { loading: buying }] = useMutation(BUY_PRODUCT);
+  const [rentProduct, { loading: renting }] = useMutation(RENT_PRODUCT);
 
-  const handleBuy = () => {
-    console.log("Product purchased");
-    setBuyModalOpen(false);
+  const handleBuy = async () => {
+    try {
+      await buyProduct({
+        variables: {
+          productId,
+          receiverId: user?.id,
+        },
+      });
+      await refetch();
+      setBuyModalOpen(false);
+    } catch (err) {
+      console.error("Buy failed:", err);
+    }
   };
 
-  const handleRent = (from: Date, to: Date) => {
-    console.log("Renting from", from, "to", to);
-    setRentModalOpen(false);
+  const handleRent = async (from: Date, to: Date) => {
+    try {
+      await rentProduct({
+        variables: {
+          productId,
+          receiverId: user?.id,
+          rentStart: from.toISOString(),
+          rentEnd: to.toISOString(),
+        },
+      });
+      setRentModalOpen(false);
+    } catch (err) {
+      console.error("Rent failed:", err);
+    }
   };
+
 
 
   if (loading) return <div>Loading...</div>;
@@ -94,6 +143,7 @@ export default function ProductDetailsPage() {
               color="teal"
               leftSection={<IconShoppingCart size={14} />}
               onClick={() => setBuyModalOpen(true)}
+              loading={buying}
             >
               Buy Now
             </Button>
@@ -103,6 +153,7 @@ export default function ProductDetailsPage() {
               variant="outline"
               leftSection={<IconCalendarEvent size={14} />}
               onClick={() => setRentModalOpen(true)}
+              loading={renting}
             >
               Rent Product
             </Button>

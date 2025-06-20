@@ -21,12 +21,13 @@ export const GET_PRODUCT = gql`
 `;
 
 export const useProductDetails = (id: number) => {
-  const { data, loading, error } = useQuery(GET_PRODUCT, {
+  const { data, loading, error, refetch  } = useQuery(GET_PRODUCT, {
     variables: { id },
   });
   return {
     product: data?.product || null,
     loading,
     error,
+    refetch,
   };
 }
