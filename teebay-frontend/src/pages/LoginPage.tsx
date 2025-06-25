@@ -41,11 +41,11 @@ export default function LoginPage() {
 
   const [validateLogin, { loading }] = useMutation(LOGIN);
 
-  const handleSubmit = async (values: LoginFormValues) => {
+  const handleSubmit = async (formValues: LoginFormValues) => {
     setErrorMessage('');
     try {
       const res = await validateLogin({
-        variables: { handle: values.handle, password: values.password },
+        variables: { handle: formValues.handle, password: formValues.password },
       });
       const user = res.data.login;
       login({ id: user.id, username: user.username });
