@@ -1,43 +1,109 @@
 .title {
   text-align: center;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+  margin: 2rem 0 3rem 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -1px;
 }
 
 .product-container {
-  padding-top: 2rem;
+  padding: 2rem 0;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .product-wrapper {
   position: relative;
+  margin-bottom: 2rem;
 }
 
 .delete-icon {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 2;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
   cursor: pointer;
-
-  width: 32px;
-  height: 32px; /* ✅ Equal width and height = perfect circle */
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
-  background-color: #fff;
-  /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); */
-  transition: background-color 0.2s;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .delete-icon:hover {
-  background-color: #ffcccc;
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.4);
+  transform: scale(1.1);
+  box-shadow: 0 8px 30px rgba(239, 68, 68, 0.2);
 }
-
 
 .card-link {
   text-decoration: none;
   display: block;
+  transition: all 0.3s ease;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 3rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.pagination-button {
+  border-radius: 12px !important;
+  padding: 8px 20px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.pagination-button:not(:disabled):hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3) !important;
+}
+
+.page-indicator {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  color: #667eea;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.empty-state-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 1rem;
+}
+
+.empty-state-text {
+  color: #94a3b8;
+  font-size: 1.1rem;
 }

@@ -16,20 +16,26 @@ import './App.css'
 
 export default function App() {
   return (
-    <TopbarLayout>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
-        <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
-        <Route path="/products" element={<ProtectedRoute><OwnedProductListPage /></ProtectedRoute>} />
-        <Route path="/products/:id" element={<ProtectedRoute><ProductDetailsPage /></ProtectedRoute>} />
-        <Route path="/products/:id/edit" element={<ProtectedRoute><EditProductPage /></ProtectedRoute>} />
-        <Route path="/products/add" element={<ProtectedRoute><AddProductPage /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-        <Route path="/products/browse" element={<ProtectedRoute><OthersProductListPage /></ProtectedRoute>} />
-        <Route path="/transactions" element={<ProtectedRoute><TransactionHistoryPage /></ProtectedRoute>} />
-        <Route path="*" element={<div>404 Not Found</div>} />
-      </Routes>
-    </TopbarLayout>
+    <div className="main-content">
+      <TopbarLayout>
+        <div className="page-container fade-in">
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+            <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+            <Route path="/products" element={<ProtectedRoute><OwnedProductListPage /></ProtectedRoute>} />
+            <Route path="/products/:id" element={<ProtectedRoute><ProductDetailsPage /></ProtectedRoute>} />
+            <Route path="/products/:id/edit" element={<ProtectedRoute><EditProductPage /></ProtectedRoute>} />
+            <Route path="/products/add" element={<ProtectedRoute><AddProductPage /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+            <Route path="/products/browse" element={<ProtectedRoute><OthersProductListPage /></ProtectedRoute>} />
+            <Route path="/transactions" element={<ProtectedRoute><TransactionHistoryPage /></ProtectedRoute>} />
+            <Route path="*" element={<div className="glass-card" style={{ padding: '2rem', textAlign: 'center' }}>
+              <h2 className="gradient-text">404 - Page Not Found</h2>
+            </div>} />
+          </Routes>
+        </div>
+      </TopbarLayout>
+    </div>
   );
 }

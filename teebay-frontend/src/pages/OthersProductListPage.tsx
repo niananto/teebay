@@ -6,11 +6,11 @@ import {
   Button,
   Text,
   Stack,
-  Group,
 } from '@mantine/core';
 import ProductCard from '../components/ProductCard';
 import { Link } from 'react-router-dom';
 import '../styles/ProductListPage.css';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { useAuth } from '../auth/AuthContext';
 
 export default function OthersProductListPage() {
@@ -23,39 +23,81 @@ export default function OthersProductListPage() {
   const handleNext = () => setPage((prev) => prev + 1);
   const handlePrev = () => setPage((prev) => Math.max(prev - 1, 1));
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Something went wrong</div>;
+  if (loading) return (
+    <Container size="lg" className="product-container">
+      <div className="empty-state">
+        <Text className="empty-state-title">Discovering amazing products...</Text>
+      </div>
+    </Container>
+  );
+
+  if (error) return (
+    <Container size="lg" className="product-container">
+      <div className="empty-state">
+        <Text className="empty-state-title">Something went wrong</Text>
+        <Text className="empty-state-text">Please try refreshing the page</Text>
+      </div>
+    </Container>
+  );
 
   return (
     <Container size="lg" className="product-container">
-      <Title order={2} className="title">BROWSE PRODUCTS</Title>
+      <Title order={1} className="title slide-in">BROWSE PRODUCTS</Title>
 
-      <Stack gap="lg">
-        {products.map((p: any) => (
-          <Link to={`/products/${p.id}`} className="card-link" key={p.id}>
-            <ProductCard
-              name={p.name}
-              categories={p.categories}
-              price={p.price}
-              rent={p.rent}
-              rentType={p.rent_type}
-              description={p.description}
-              created={p.created}
-              ownerId={p.owner_id}
-            />
-          </Link>
-        ))}
-      </Stack>
+      {products.length === 0 ? (
+        <div className="empty-state fade-in">
+          <Text className="empty-state-title">No products available</Text>
+          <Text className="empty-state-text">Check back later for new listings</Text>
+        </div>
+      ) : (
+        <>
+          <Stack gap="xl" className="fade-in">
+            {products.map((p: any, index: number) => (
+              <Link 
+                to={`/products/${p.id}`} 
+                className="card-link slide-in" 
+                key={p.id}
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <ProductCard
+                  name={p.name}
+                  categories={p.categories}
+                  price={p.price}
+                  rent={p.rent}
+                  rentType={p.rent_type}
+                  description={p.description}
+                  created={p.created}
+                  ownerId={p.owner_id}
+                />
+              </Link>
+            ))}
+          </Stack>
 
-      <Group justify="center" mt="lg">
-        <Button onClick={handlePrev} disabled={page === 1}>
-          Previous
-        </Button>
-        <Text>Page {page}</Text>
-        <Button onClick={handleNext} disabled={products.length < limit}>
-          Next
-        </Button>
-      </Group>
+          <div className="pagination-container">
+            <Button 
+              onClick={handlePrev} 
+              disabled={page === 1}
+              leftSection={<IconChevronLeft size={18} />}
+              variant="outline"
+              className="pagination-button"
+            >
+              Previous
+            </Button>
+            <div className="page-indicator">
+              Page {page}
+            </div>
+            <Button 
+              onClick={handleNext} 
+              disabled={products.length < limit}
+              rightSection={<IconChevronRight size={18} />}
+              variant="outline"
+              className="pagination-button"
+            >
+              Next
+            </Button>
+          </div>
+        </>
+      )}
     </Container>
   );
 }

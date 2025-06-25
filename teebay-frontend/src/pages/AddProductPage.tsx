@@ -11,7 +11,11 @@ import {
   Flex,
   Text,
   FileInput,
-  LoadingOverlay
+  LoadingOverlay,
+  Progress,
+  Card,
+  Group,
+  ThemeIcon
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useEffect, useState } from 'react';
@@ -20,6 +24,7 @@ import { useRentTypes } from '../hooks/useRentTypes';
 import { gql, useMutation } from '@apollo/client';
 import { useAuth } from '../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { IconCheck, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 
 const ADD_PRODUCT = gql`
   mutation CreateProduct($ownerId: Int!, $input: CreateProductInput!) {
@@ -107,7 +112,6 @@ export default function AddProductPage() {
             const existingProducts = existingOwnedProducts.products || [];
             const newTotal = (existingOwnedProducts.total || 0) + 1;
 
-            // Try to extract limit from the storeFieldName string, fallback to 5
             let limit = 5;
             if (modifierDetails && typeof modifierDetails.storeFieldName === 'string') {
               const match = modifierDetails.storeFieldName.match(/limit:(\d+)/);
@@ -143,7 +147,7 @@ export default function AddProductPage() {
               rent: form.values.rent,
               rent_type: form.values.rentType,
               categoryIds: form.values.categoryIds.map((id) => parseInt(id, 10)),
-              imageUrls: [], // handle image uploads separately
+              imageUrls: [],
             },
           },
         });
@@ -175,139 +179,294 @@ export default function AddProductPage() {
     }
   };
 
+  const progress = ((step + 1) / steps.length) * 100;
 
   return (
-    <Container size="xs" py="xl" pos="relative">
+    <Container size="md" py="xl" pos="relative">
       <LoadingOverlay visible={loadingCategories || loadingRentTypes} />
-      <Title order={3} ta="center" mb="lg">Adding New Product</Title>
-
-      {step === 0 && (
-        <Stack>
-          <Title order={5} ta="center">Set a title for your product</Title>
-          <TextInput
-            placeholder="Product title"
-            {...form.getInputProps('name')}
-          />
-        </Stack>
-      )}
-
-      {step === 1 && (
-        <Stack>
-          <Title order={5} ta="center">Select categories</Title>
-          <MultiSelect
-            data={categoryOptions}
-            placeholder="Select categories"
-            {...form.getInputProps('categoryIds')}
-          />
-          <Text fz="xs" c="dimmed" ta="center">
-            NOTE: This is a multi-select dropdown
-          </Text>
-        </Stack>
-      )}
-
-      {step === 2 && (
-        <Stack>
-          <Title order={5} ta="center">Write a description</Title>
-          <Textarea
-            placeholder="Product description"
-            minRows={4}
-            resize='vertical'
-            {...form.getInputProps('description')}
-          />
-        </Stack>
-      )}
-
-      {step === 3 && (
-        <Stack>
-          <Title order={5} ta="center">Enter Selling Price, Renting Price and Renting Type</Title>
-          <NumberInput
-            placeholder="Purchase price"
-            min={0}
-            prefix="$"
-            {...form.getInputProps('price')}
-          />
-          <Flex gap="md" direction="row" wrap="wrap">
-            <NumberInput
-              placeholder="Rent price"
-              min={0}
-              prefix="$"
-              style={{ flex: 1 }}
-              {...form.getInputProps('rent')}
+      
+      <Card className="glass-card" p="3rem" radius="xl">
+        <Stack gap="xl">
+          <div>
+            <Title order={2} ta="center" className="gradient-text" mb="md">
+              Add New Product
+            </Title>
+            <Progress 
+              value={progress} 
+              size="lg" 
+              radius="xl"
+              style={{
+                background: 'rgba(102, 126, 234, 0.1)',
+              }}
+              styles={{
+                bar: {
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                }
+              }}
             />
-            <Select
-              placeholder="Select rent type"
-              data={rentTypeOptions}
-              style={{ flex: 1 }}
-              {...form.getInputProps('rentType')}
-            />
-          </Flex>
-        </Stack>
-      )}
+            <Text size="sm" ta="center" mt="sm" c="dimmed">
+              Step {step + 1} of {steps.length}: {steps[step]}
+            </Text>
+          </div>
 
-      {step === 4 && (
-        <Stack>
-          <Title order={5} ta="center">Upload Product Images</Title>
-          <FileInput
-            placeholder="Choose files"
-            multiple
-            accept="image/*"
-            {...form.getInputProps('imageFiles')}
-          />
-          <Text fz="xs" c="dimmed" ta="center">
-            NOTE: You can upload multiple images (optional)
-          </Text>
-        </Stack>
-      )}
+          <div style={{ minHeight: '300px', display: 'flex', alignItems: 'center' }}>
+            {step === 0 && (
+              <Stack w="100%" gap="lg">
+                <div style={{ textAlign: 'center' }}>
+                  <ThemeIcon size={60} radius="xl" mb="md" style={{
+                    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1))',
+                    border: '1px solid rgba(102, 126, 234, 0.2)',
+                    margin: '0 auto'
+                  }}>
+                    <IconCheck size={30} />
+                  </ThemeIcon>
+                  <Title order={4} className="gradient-text">Set a title for your product</Title>
+                </div>
+                <TextInput
+                  placeholder="Enter an attractive product title"
+                  size="lg"
+                  {...form.getInputProps('name')}
+                  styles={{
+                    input: {
+                      borderRadius: '12px',
+                      border: '2px solid rgba(102, 126, 234, 0.1)',
+                      background: 'rgba(255, 255, 255, 0.8)',
+                      backdropFilter: 'blur(10px)',
+                      fontSize: '1.1rem',
+                      padding: '12px 16px',
+                    }
+                  }}
+                />
+              </Stack>
+            )}
 
-      {step === 5 && (
-        <Stack>
-          <Title order={5} ta="center">Summary</Title>
-          <Text><strong>Title:</strong> {form.values.name}</Text>
-          <Text>
-            <strong>Categories:</strong>{' '}
-            {categoryOptions
-              .filter((c: { value: string; label: string }) => form.values.categoryIds.includes(c.value))
-              .map((c: { value: string; label: string }) => c.label)
-              .join(', ')
-            }
-          </Text>
-          <Text><strong>Description:</strong> {form.values.description}</Text>
-          <Text>
-            <strong>Price:</strong> ${form.values.price}, Rent: ${form.values.rent} {form.values.rentType.replace('_', ' ')}
-          </Text>
-          <Text><strong>Images:</strong> {form.values.imageFiles.length} file(s) selected</Text>
-        </Stack>
-      )}
+            {step === 1 && (
+              <Stack w="100%" gap="lg">
+                <div style={{ textAlign: 'center' }}>
+                  <Title order={4} className="gradient-text">Select categories</Title>
+                  <Text size="sm" c="dimmed" mt="xs">Choose all relevant categories for better visibility</Text>
+                </div>
+                <MultiSelect
+                  data={categoryOptions}
+                  placeholder="Select categories"
+                  size="lg"
+                  {...form.getInputProps('categoryIds')}
+                  styles={{
+                    input: {
+                      borderRadius: '12px',
+                      border: '2px solid rgba(102, 126, 234, 0.1)',
+                      background: 'rgba(255, 255, 255, 0.8)',
+                      backdropFilter: 'blur(10px)',
+                    }
+                  }}
+                />
+              </Stack>
+            )}
 
-      <Flex justify="center" mt="xl" gap="md">
-        {step > 0 && <Button variant="default" onClick={prevStep}>Back</Button>}
+            {step === 2 && (
+              <Stack w="100%" gap="lg">
+                <div style={{ textAlign: 'center' }}>
+                  <Title order={4} className="gradient-text">Write a description</Title>
+                  <Text size="sm" c="dimmed" mt="xs">Describe your product in detail (optional)</Text>
+                </div>
+                <Textarea
+                  placeholder="Describe your product's features, condition, and any important details..."
+                  minRows={6}
+                  resize='vertical'
+                  size="lg"
+                  {...form.getInputProps('description')}
+                  styles={{
+                    input: {
+                      borderRadius: '12px',
+                      border: '2px solid rgba(102, 126, 234, 0.1)',
+                      background: 'rgba(255, 255, 255, 0.8)',
+                      backdropFilter: 'blur(10px)',
+                    }
+                  }}
+                />
+              </Stack>
+            )}
 
-        {(step === 2 || step === 4) ? (
-          <>
-            <Button variant="light" onClick={nextStep}>Skip</Button>
-            <Button onClick={() => {
-              if (validateStep()) nextStep();
+            {step === 3 && (
+              <Stack w="100%" gap="lg">
+                <div style={{ textAlign: 'center' }}>
+                  <Title order={4} className="gradient-text">Set your pricing</Title>
+                  <Text size="sm" c="dimmed" mt="xs">Enter selling price, rental price and rental period</Text>
+                </div>
+                <NumberInput
+                  label="Purchase Price"
+                  placeholder="Enter selling price"
+                  min={0}
+                  prefix="$"
+                  size="lg"
+                  {...form.getInputProps('price')}
+                  styles={{
+                    input: {
+                      borderRadius: '12px',
+                      border: '2px solid rgba(102, 126, 234, 0.1)',
+                      background: 'rgba(255, 255, 255, 0.8)',
+                      backdropFilter: 'blur(10px)',
+                    }
+                  }}
+                />
+                <Group grow>
+                  <NumberInput
+                    label="Rental Price"
+                    placeholder="Enter rental price"
+                    min={0}
+                    prefix="$"
+                    size="lg"
+                    {...form.getInputProps('rent')}
+                    styles={{
+                      input: {
+                        borderRadius: '12px',
+                        border: '2px solid rgba(102, 126, 234, 0.1)',
+                        background: 'rgba(255, 255, 255, 0.8)',
+                        backdropFilter: 'blur(10px)',
+                      }
+                    }}
+                  />
+                  <Select
+                    label="Rental Period"
+                    placeholder="Select period"
+                    data={rentTypeOptions}
+                    size="lg"
+                    {...form.getInputProps('rentType')}
+                    styles={{
+                      input: {
+                        borderRadius: '12px',
+                        border: '2px solid rgba(102, 126, 234, 0.1)',
+                        background: 'rgba(255, 255, 255, 0.8)',
+                        backdropFilter: 'blur(10px)',
+                      }
+                    }}
+                  />
+                </Group>
+              </Stack>
+            )}
+
+            {step === 4 && (
+              <Stack w="100%" gap="lg">
+                <div style={{ textAlign: 'center' }}>
+                  <Title order={4} className="gradient-text">Upload product images</Title>
+                  <Text size="sm" c="dimmed" mt="xs">Add photos to showcase your product (optional)</Text>
+                </div>
+                <FileInput
+                  placeholder="Choose image files"
+                  multiple
+                  accept="image/*"
+                  size="lg"
+                  {...form.getInputProps('imageFiles')}
+                  styles={{
+                    input: {
+                      borderRadius: '12px',
+                      border: '2px solid rgba(102, 126, 234, 0.1)',
+                      background: 'rgba(255, 255, 255, 0.8)',
+                      backdropFilter: 'blur(10px)',
+                    }
+                  }}
+                />
+              </Stack>
+            )}
+
+            {step === 5 && (
+              <Stack w="100%" gap="lg">
+                <div style={{ textAlign: 'center' }}>
+                  <Title order={4} className="gradient-text">Review your product</Title>
+                  <Text size="sm" c="dimmed" mt="xs">Please review all details before publishing</Text>
+                </div>
+                <Card p="lg" radius="md" style={{ background: 'rgba(102, 126, 234, 0.05)', border: '1px solid rgba(102, 126, 234, 0.1)' }}>
+                  <Stack gap="sm">
+                    <Text><strong>Title:</strong> {form.values.name}</Text>
+                    <Text>
+                      <strong>Categories:</strong>{' '}
+                      {categoryOptions
+                        .filter((c: { value: string; label: string }) => form.values.categoryIds.includes(c.value))
+                        .map((c: { value: string; label: string }) => c.label)
+                        .join(', ')
+                      }
+                    </Text>
+                    <Text><strong>Description:</strong> {form.values.description || 'No description provided'}</Text>
+                    <Text>
+                      <strong>Pricing:</strong> ${form.values.price} to buy, ${form.values.rent} to rent {form.values.rentType.toLowerCase()}
+                    </Text>
+                    <Text><strong>Images:</strong> {form.values.imageFiles.length} file(s) selected</Text>
+                  </Stack>
+                </Card>
+              </Stack>
+            )}
+          </div>
+
+          <Group justify="center" gap="lg">
+            {step > 0 && (
+              <Button 
+                variant="outline" 
+                onClick={prevStep}
+                leftSection={<IconChevronLeft size={18} />}
+                style={{ borderRadius: '12px' }}
+              >
+                Back
+              </Button>
+            )}
+
+            {(step === 2 || step === 4) ? (
+              <Group gap="sm">
+                <Button 
+                  variant="light" 
+                  onClick={nextStep}
+                  style={{ borderRadius: '12px' }}
+                >
+                  Skip
+                </Button>
+                <Button 
+                  variant="gradient"
+                  gradient={{ from: '#667eea', to: '#764ba2' }}
+                  onClick={() => {
+                    if (validateStep()) nextStep();
+                  }}
+                  rightSection={<IconChevronRight size={18} />}
+                  style={{ borderRadius: '12px' }}
+                >
+                  Next
+                </Button>
+              </Group>
+            ) : step < steps.length - 1 ? (
+              <Button 
+                variant="gradient"
+                gradient={{ from: '#667eea', to: '#764ba2' }}
+                onClick={() => {
+                  if (validateStep()) nextStep();
+                }}
+                rightSection={<IconChevronRight size={18} />}
+                style={{ borderRadius: '12px' }}
+              >
+                Next
+              </Button>
+            ) : (
+              <Button 
+                size="lg"
+                variant="gradient"
+                gradient={{ from: '#10b981', to: '#059669' }}
+                onClick={() => {handleSubmit(form.values);}}
+                loading={submitting}
+                style={{ borderRadius: '12px', padding: '12px 32px' }}
+              >
+                Publish Product
+              </Button>
+            )}
+          </Group>
+
+          {submitError && (
+            <Text c="red" ta="center" p="sm" style={{
+              background: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
+              borderRadius: '8px'
             }}>
-              Next
-            </Button>
-          </>
-        ) : step < steps.length - 1 ? (
-          <Button onClick={() => {
-            if (validateStep()) nextStep();
-          }}>
-            Next
-          </Button>
-        ) : (
-          <>
-            <Button color="green" onClick={() => {handleSubmit(form.values);}}>
-              Submit
-            </Button>
-            {submitting && <Text c="dimmed">Submitting...</Text>}
-            {submitError && <Text c="red">{submitError.message}</Text>}
-          </>
-        )}
-      </Flex>
-
+              {submitError.message}
+            </Text>
+          )}
+        </Stack>
+      </Card>
     </Container>
   );
 }

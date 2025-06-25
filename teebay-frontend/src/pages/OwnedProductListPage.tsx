@@ -5,7 +5,7 @@ import ProductCard from '../components/ProductCard';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { Link } from 'react-router-dom';
 import '../styles/ProductListPage.css';
-import { IconTrash } from '@tabler/icons-react';
+import { IconTrash, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { gql, useMutation } from '@apollo/client';
 import { useAuth } from '../auth/AuthContext';
 
@@ -40,60 +40,109 @@ export default function OwnedProductListPage() {
 
     try {
       await deleteProduct({ variables: { id: selectedProductId } });
-
-      // Optional: show success message or toast here
-      // Refetch product list or remove from local state if you're caching manually
-      // For now, a simple window reload or refetchProducts() can work:
-      window.location.reload(); // or trigger useProductList() to refetch
-
+      window.location.reload();
       setDeleteModalOpen(false);
     } catch (err) {
       console.error('Failed to delete product:', err);
-      // Optionally show an error toast
     }
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Something went wrong</div>;
+  if (loading) return (
+    <Container size="lg" className="product-container">
+      <div className="empty-state">
+        <Text className="empty-state-title">Loading your products...</Text>
+      </div>
+    </Container>
+  );
+
+  if (error) return (
+    <Container size="lg" className="product-container">
+      <div className="empty-state">
+        <Text className="empty-state-title">Something went wrong</Text>
+        <Text className="empty-state-text">Please try refreshing the page</Text>
+      </div>
+    </Container>
+  );
 
   return (
     <Container size="lg" className="product-container">
-      <Title order={2} className="title">MY PRODUCTS</Title>
+      <Title order={1} className="title slide-in">MY PRODUCTS</Title>
 
-      <Stack gap="lg">
-        {products.map((p: any) => (
-          <div className="product-wrapper" key={p.id}>
-            <div className="delete-icon" onClick={() => openDeleteModal(p.id)}>
-              <IconTrash size={18} color="red" />
+      {products.length === 0 ? (
+        <div className="empty-state fade-in">
+          <Text className="empty-state-title">No products yet</Text>
+          <Text className="empty-state-text">Start by adding your first product to the marketplace</Text>
+          <Link to="/products/add" style={{ textDecoration: 'none', marginTop: '2rem', display: 'inline-block' }}>
+            <Button 
+              variant="gradient"
+              gradient={{ from: '#667eea', to: '#764ba2' }}
+              size="lg"
+              style={{ borderRadius: '12px' }}
+            >
+              Add Your First Product
+            </Button>
+          </Link>
+        </div>
+      ) : (
+        <>
+          <Stack gap="xl" className="fade-in">
+            {products.map((p: any, index: number) => (
+              <div 
+                className="product-wrapper slide-in" 
+                key={p.id}
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <div className="delete-icon" onClick={() => openDeleteModal(p.id)}>
+                  <IconTrash size={20} color="#ef4444" />
+                </div>
+
+                <Link to={`/products/${p.id}`} className="card-link">
+                  <ProductCard
+                    name={p.name}
+                    categories={p.categories}
+                    price={p.price}
+                    rent={p.rent}
+                    rentType={p.rent_type}
+                    description={p.description}
+                    created={p.created}
+                  />
+                </Link>
+              </div>
+            ))}
+          </Stack>
+
+          <div className="pagination-container">
+            <Button 
+              onClick={handlePrev} 
+              disabled={page === 1}
+              leftSection={<IconChevronLeft size={18} />}
+              variant="outline"
+              className="pagination-button"
+            >
+              Previous
+            </Button>
+            <div className="page-indicator">
+              Page {page}
             </div>
-
-            <Link to={`/products/${p.id}`} className="card-link">
-              <ProductCard
-                name={p.name}
-                categories={p.categories}
-                price={p.price}
-                rent={p.rent}
-                rentType={p.rent_type}
-                description={p.description}
-                created={p.created}
-              />
-            </Link>
+            <Button 
+              onClick={handleNext} 
+              disabled={products.length < limit}
+              rightSection={<IconChevronRight size={18} />}
+              variant="outline"
+              className="pagination-button"
+            >
+              Next
+            </Button>
           </div>
-        ))}
-      </Stack>
+        </>
+      )}
 
       <ConfirmationModal
         opened={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        message="Are you sure you want to delete this product?"
+        message="Are you sure you want to delete this product? This action cannot be undone."
       />
-
-      <Group justify="center" mt="lg">
-        <Button onClick={handlePrev} disabled={page === 1}>Previous</Button>
-        <Text>Page {page}</Text>
-        <Button onClick={handleNext} disabled={products.length < limit}>Next</Button>
-      </Group>
     </Container>
   );
 }

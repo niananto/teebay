@@ -2,6 +2,8 @@ import {
   Button,
   Group,
   Container,
+  Card,
+  Stack,
 } from '@mantine/core';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useProductDetails } from '../hooks/useProductDetails';
@@ -43,7 +45,6 @@ const RENT_PRODUCT = gql`
     }
   }
 `;
-
 
 export default function ProductDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -102,77 +103,116 @@ export default function ProductDetailsPage() {
     }
   };
 
+  if (loading) return (
+    <Container size="md" pt="md">
+      <Card className="glass-card" p="xl" radius="xl">
+        <div className="empty-state">
+          <div className="empty-state-title">Loading product details...</div>
+        </div>
+      </Card>
+    </Container>
+  );
 
-
-  if (loading) return <div>Loading...</div>;
-  if (error || !product) return <div>Failed to load product</div>;
+  if (error || !product) return (
+    <Container size="md" pt="md">
+      <Card className="glass-card" p="xl" radius="xl">
+        <div className="empty-state">
+          <div className="empty-state-title">Failed to load product</div>
+          <div className="empty-state-text">Please try refreshing the page</div>
+        </div>
+      </Card>
+    </Container>
+  );
 
   const isOwner = user?.id === product.owner_id;
 
   return (
-    <Container size="md" pt="md">
-      <ProductDetails {...product} />
+    <Container size="md" py="xl">
+      <Card className="glass-card hover-lift" p="2rem" radius="xl">
+        <Stack gap="xl">
+          <ProductDetails {...product} />
 
-      <Group justify="center" mb="sm">
-        {isOwner ? (
-          <>
-            <Button
-              size="xs"
-              color="red"
-              variant="light"
-              leftSection={<IconTrash size={14} />}
-              onClick={() => setDeleteModalOpen(true)}
-            >
-              Delete
-            </Button>
-            <Link to={`/products/${id}/edit`}>
-              <Button
-                size="xs"
-                variant="light"
-                color="blue"
-                leftSection={<IconPencil size={14} />}
-              >
-                Edit
-              </Button>
-            </Link>
-          </>
-        ) : (
-          <>
-            <Button
-              size="xs"
-              color="teal"
-              leftSection={<IconShoppingCart size={14} />}
-              onClick={() => setBuyModalOpen(true)}
-              loading={buying}
-            >
-              Buy Now
-            </Button>
-            <Button
-              size="xs"
-              color="grape"
-              variant="outline"
-              leftSection={<IconCalendarEvent size={14} />}
-              onClick={() => setRentModalOpen(true)}
-              loading={renting}
-            >
-              Rent Product
-            </Button>
-          </>
-        )}
-      </Group>
+          <Group justify="center" gap="md">
+            {isOwner ? (
+              <>
+                <Button
+                  size="md"
+                  color="red"
+                  variant="light"
+                  leftSection={<IconTrash size={18} />}
+                  onClick={() => setDeleteModalOpen(true)}
+                  className="hover-lift"
+                  style={{ borderRadius: '12px' }}
+                >
+                  Delete Product
+                </Button>
+                <Link to={`/products/${id}/edit`} style={{ textDecoration: 'none' }}>
+                  <Button
+                    size="md"
+                    variant="gradient"
+                    gradient={{ from: '#667eea', to: '#764ba2' }}
+                    leftSection={<IconPencil size={18} />}
+                    className="hover-lift"
+                    style={{ borderRadius: '12px' }}
+                  >
+                    Edit Product
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Button
+                  size="lg"
+                  variant="gradient"
+                  gradient={{ from: '#10b981', to: '#059669' }}
+                  leftSection={<IconShoppingCart size={20} />}
+                  onClick={() => setBuyModalOpen(true)}
+                  loading={buying}
+                  className="hover-lift"
+                  style={{ 
+                    borderRadius: '12px',
+                    padding: '12px 24px',
+                    fontSize: '1.1rem',
+                    fontWeight: 600
+                  }}
+                >
+                  Buy Now
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  color="grape"
+                  leftSection={<IconCalendarEvent size={20} />}
+                  onClick={() => setRentModalOpen(true)}
+                  loading={renting}
+                  className="hover-lift"
+                  style={{ 
+                    borderRadius: '12px',
+                    padding: '12px 24px',
+                    fontSize: '1.1rem',
+                    fontWeight: 600
+                  }}
+                >
+                  Rent Product
+                </Button>
+              </>
+            )}
+          </Group>
+        </Stack>
+      </Card>
 
       <ConfirmationModal
         opened={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        message="Are you sure you want to delete this product?"
+        message="Are you sure you want to delete this product? This action cannot be undone."
       />
 
       <ConfirmationModal
         opened={buyModalOpen}
         onClose={() => setBuyModalOpen(false)}
         onConfirm={handleBuy}
-        message="Are you sure you want to buy this product?"
+        message="Are you sure you want to purchase this product?"
       />
 
       <RentProductModal
@@ -180,7 +220,6 @@ export default function ProductDetailsPage() {
         onClose={() => setRentModalOpen(false)}
         onConfirm={handleRent}
       />
-
     </Container>
   );
 }
