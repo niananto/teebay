@@ -1,10 +1,10 @@
-import { useForm } from '@mantine/form';
-import { Button, TextInput, Text, ActionIcon } from '@mantine/core';
-import { IconEye, IconEyeOff } from '@tabler/icons-react';
+import { useState } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { useNavigate, Link, Navigate } from 'react-router-dom';
-import styles from '../styles/LoginPage.module.css';
 import { gql, useMutation } from '@apollo/client';
-import { useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
 
 const LOGIN = gql`
@@ -34,14 +34,20 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-
-  const form = useForm<LoginFormValues>({
-    initialValues: { handle: '', password: '' },
+  const [formValues, setFormValues] = useState<LoginFormValues>({
+    handle: '',
+    password: '',
   });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormValues((p) => ({ ...p, [name]: value }))
+  }
 
   const [validateLogin, { loading }] = useMutation(LOGIN);
 
-  const handleSubmit = async (values: LoginFormValues) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
     setErrorMessage('');
     try {
       const res = await validateLogin({
@@ -56,44 +62,57 @@ export default function LoginPage() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.card}>
-        <div className={styles.title}>SIGN IN</div>
+    <div className="min-h-[80vh] flex justify-center items-center p-8">
+      <div className="w-full max-w-md p-12 bg-white/95 backdrop-blur-2xl border border-white/20 shadow-2xl rounded-3xl text-center relative overflow-hidden">
+        <div className="text-2xl font-bold mb-8 bg-gradient-to-r from-indigo-500 to-purple-700 bg-clip-text text-transparent">SIGN IN</div>
 
-        <form onSubmit={form.onSubmit(handleSubmit)}>
-          <TextInput
-            placeholder="Email/Username/Phone"
-            className={styles.input}
-            {...form.getInputProps('handle')}
-            required
-          />
+        <form onSubmit={handleSubmit} className="space-y-6 text-left">
+          <div className="space-y-2">
+            <Label htmlFor="handle">Email/Username/Phone</Label>
+            <Input
+              id="handle"
+              name="handle"
+              placeholder="Your handle"
+              value={formValues.handle}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          <TextInput
-            placeholder="Password"
-            type={showPassword ? 'text' : 'password'}
-            className={styles.input}
-            rightSection={
-              <ActionIcon onClick={() => setShowPassword((prev) => !prev)} variant='transparent'>
-                {showPassword ? <IconEyeOff size="1rem" /> : <IconEye size="1rem" />}
-              </ActionIcon>
-            }
-            {...form.getInputProps('password')}
-            required
-          />
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <div className="relative">
+              <Input
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Password"
+                value={formValues.password}
+                onChange={handleChange}
+                required
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((p) => !p)}
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
 
           {errorMessage && (
-            <Text color="red" size="sm" mt="sm">
-              {errorMessage}
-            </Text>
+            <p className="text-red-600 text-sm">{errorMessage}</p>
           )}
 
-          <Button type="submit" className={styles.button} loading={loading}>
+          <Button type="submit" className="w-full" disabled={loading}>
             LOGIN
           </Button>
         </form>
 
-        <div className={styles.linkText}>
-          Don&apos;t have an account? <Link to="/register">Signup</Link>
+        <div className="text-sm mt-8 text-slate-600">
+          Don&apos;t have an account? <Link to="/register" className="text-indigo-600 hover:underline">Signup</Link>
         </div>
       </div>
     </div>

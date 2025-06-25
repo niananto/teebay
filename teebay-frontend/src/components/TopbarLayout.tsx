@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
-import { Button, Group, Menu, Avatar, Text } from '@mantine/core';
-import { IconUser, IconLogout, IconShoppingBag, IconSearch, IconPlus, IconHistory } from '@tabler/icons-react';
+import { Button } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
+import { ShoppingBag, Search, Plus, History, User, LogOut } from 'lucide-react'
 import type { ReactNode } from 'react';
 
 export default function TopbarLayout({ children }: { children: ReactNode }) {
@@ -9,154 +11,69 @@ export default function TopbarLayout({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <header
-        style={{
-          padding: '1rem 2rem',
-          background: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(10px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
-        }}
-      >
+      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-white/20 bg-white/95 backdrop-blur p-4 shadow">
         <Link to="/" style={{ textDecoration: 'none' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <img src="/teebay.png" alt="Teebay logo" style={{ height: '40px' }} />
-            <Text size="xl" fw={700} className="gradient-text">TeeBay</Text>
+            <span className="text-xl font-bold gradient-text">TeeBay</span>
           </div>
         </Link>
-
-        <Group gap="sm">
+        <div className="flex items-center gap-2">
           {user ? (
             <>
-              <Link to="/products" style={{ textDecoration: 'none' }}>
-                <Button 
-                  variant="subtle" 
-                  leftSection={<IconShoppingBag size={18} />}
-                  className="hover-lift"
-                  style={{ 
-                    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1))',
-                    border: '1px solid rgba(102, 126, 234, 0.2)',
-                    borderRadius: '12px'
-                  }}
-                >
-                  My Products
+              <Link to="/products">
+                <Button variant="ghost" className="gap-1">
+                  <ShoppingBag className="h-4 w-4" /> My Products
                 </Button>
               </Link>
-              <Link to="/products/browse" style={{ textDecoration: 'none' }}>
-                <Button 
-                  variant="subtle" 
-                  leftSection={<IconSearch size={18} />}
-                  className="hover-lift"
-                  style={{ 
-                    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1))',
-                    border: '1px solid rgba(102, 126, 234, 0.2)',
-                    borderRadius: '12px'
-                  }}
-                >
-                  Browse Products
+              <Link to="/products/browse">
+                <Button variant="ghost" className="gap-1">
+                  <Search className="h-4 w-4" /> Browse Products
                 </Button>
               </Link>
-              <Link to="/products/add" style={{ textDecoration: 'none' }}>
-                <Button 
-                  variant="gradient"
-                  gradient={{ from: '#667eea', to: '#764ba2' }}
-                  leftSection={<IconPlus size={18} />}
-                  className="hover-lift"
-                  style={{ borderRadius: '12px' }}
-                >
-                  Add Product
+              <Link to="/products/add">
+                <Button className="gap-1 bg-indigo-500 text-white hover:bg-indigo-600">
+                  <Plus className="h-4 w-4" /> Add Product
                 </Button>
               </Link>
-              <Link to="/transactions" style={{ textDecoration: 'none' }}>
-                <Button 
-                  variant="subtle" 
-                  leftSection={<IconHistory size={18} />}
-                  className="hover-lift"
-                  style={{ 
-                    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1))',
-                    border: '1px solid rgba(102, 126, 234, 0.2)',
-                    borderRadius: '12px'
-                  }}
-                >
-                  Transactions
+              <Link to="/transactions">
+                <Button variant="ghost" className="gap-1">
+                  <History className="h-4 w-4" /> Transactions
                 </Button>
               </Link>
-              <Menu shadow="xl" width={200} position="bottom-end">
-                <Menu.Target>
-                  <Button
-                    variant="subtle"
-                    className="hover-lift"
-                    style={{ 
-                      background: 'rgba(255, 255, 255, 0.8)',
-                      border: '1px solid rgba(102, 126, 234, 0.2)',
-                      borderRadius: '12px',
-                      padding: '8px 12px'
-                    }}
-                  >
-                    <Group gap="xs">
-                      <Avatar
-                        src={user.profilePicture || '/default-avatar.png'}
-                        alt="Profile"
-                        size={28}
-                        radius="xl"
-                      />
-                      <Text size="sm" fw={500}>{user.username}</Text>
-                    </Group>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="gap-2">
+                    <Avatar className="h-7 w-7 rounded-full overflow-hidden">
+                      <AvatarImage src={user.profilePicture || '/default-avatar.png'} />
+                      <AvatarFallback>{user.username[0]}</AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm font-medium">{user.username}</span>
                   </Button>
-                </Menu.Target>
-                <Menu.Dropdown style={{ 
-                  background: 'rgba(255, 255, 255, 0.95)',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  borderRadius: '12px'
-                }}>
-                  <Menu.Item 
-                    component={Link} 
-                    to="/profile"
-                    leftSection={<IconUser size={16} />}
-                  >
-                    Profile
-                  </Menu.Item>
-                  <Menu.Item 
-                    color="red" 
-                    onClick={logout}
-                    leftSection={<IconLogout size={16} />}
-                  >
-                    Logout
-                  </Menu.Item>
-                </Menu.Dropdown>
-              </Menu>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="flex items-center gap-2">
+                      <User className="h-4 w-4" /> Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={logout} className="text-red-600 flex items-center gap-2">
+                    <LogOut className="h-4 w-4" /> Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </>
           ) : (
             <>
-              <Link to="/register" style={{ textDecoration: 'none' }}>
-                <Button 
-                  variant="light" 
-                  className="hover-lift"
-                  style={{ borderRadius: '12px' }}
-                >
-                  Register
-                </Button>
+              <Link to="/register">
+                <Button variant="ghost">Register</Button>
               </Link>
-              <Link to="/login" style={{ textDecoration: 'none' }}>
-                <Button 
-                  variant="gradient"
-                  gradient={{ from: '#667eea', to: '#764ba2' }}
-                  className="hover-lift"
-                  style={{ borderRadius: '12px' }}
-                >
-                  Login
-                </Button>
+              <Link to="/login">
+                <Button className="bg-indigo-500 text-white hover:bg-indigo-600">Login</Button>
               </Link>
             </>
           )}
-        </Group>
+        </div>
       </header>
 
       <main>{children}</main>
