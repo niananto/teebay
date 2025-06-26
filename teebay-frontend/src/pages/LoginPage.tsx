@@ -51,7 +51,7 @@ export default function LoginPage() {
     setErrorMessage('');
     try {
       const res = await validateLogin({
-        variables: { handle: values.handle, password: values.password },
+        variables: { handle: formValues.handle, password: formValues.password },
       });
       const user = res.data.login;
       login({ id: user.id, username: user.username });
