@@ -3,7 +3,14 @@ import { useAuth } from '../auth/AuthContext';
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
-import { ShoppingBag, Search, Plus, History, User, LogOut } from 'lucide-react'
+import {
+  ShoppingBagIcon,
+  SearchIcon,
+  PlusIcon,
+  HistoryIcon,
+  UserIcon,
+  LogOutIcon,
+} from './icons'
 import type { ReactNode } from 'react';
 
 export default function TopbarLayout({ children }: { children: ReactNode }) {
@@ -23,22 +30,22 @@ export default function TopbarLayout({ children }: { children: ReactNode }) {
             <>
               <Link to="/products">
                 <Button variant="ghost" className="gap-1">
-                  <ShoppingBag className="h-4 w-4" /> My Products
+                  <ShoppingBagIcon className="h-4 w-4" /> My Products
                 </Button>
               </Link>
               <Link to="/products/browse">
                 <Button variant="ghost" className="gap-1">
-                  <Search className="h-4 w-4" /> Browse Products
+                  <SearchIcon className="h-4 w-4" /> Browse Products
                 </Button>
               </Link>
               <Link to="/products/add">
                 <Button className="gap-1 bg-indigo-500 text-white hover:bg-indigo-600">
-                  <Plus className="h-4 w-4" /> Add Product
+                  <PlusIcon className="h-4 w-4" /> Add Product
                 </Button>
               </Link>
               <Link to="/transactions">
                 <Button variant="ghost" className="gap-1">
-                  <History className="h-4 w-4" /> Transactions
+                  <HistoryIcon className="h-4 w-4" /> Transactions
                 </Button>
               </Link>
               <DropdownMenu>
@@ -54,11 +61,11 @@ export default function TopbarLayout({ children }: { children: ReactNode }) {
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem asChild>
                     <Link to="/profile" className="flex items-center gap-2">
-                      <User className="h-4 w-4" /> Profile
+                      <UserIcon className="h-4 w-4" /> Profile
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={logout} className="text-red-600 flex items-center gap-2">
-                    <LogOut className="h-4 w-4" /> Logout
+                    <LogOutIcon className="h-4 w-4" /> Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
