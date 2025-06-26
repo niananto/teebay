@@ -1,10 +1,10 @@
-import { useForm } from '@mantine/form';
-import { IconEye, IconEyeOff } from '@tabler/icons-react';
-import { ActionIcon, TextInput, Button, Box } from '@mantine/core';
-import { useState } from 'react';
-import styles from '../styles/RegisterPage.module.css';
-import { useNavigate, Link } from 'react-router-dom';
-import { gql, useMutation } from '@apollo/client';
+import { useState } from 'react'
+import { EyeIcon, EyeOffIcon } from '@/components/icons'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { useNavigate, Link } from 'react-router-dom'
+import { gql, useMutation } from '@apollo/client'
 
 const REGISTER = gql`
   mutation Register($input: RegisterInput!) {
@@ -30,40 +30,39 @@ type RegisterFormValues = {
 export default function RegisterPage() {
   const navigate = useNavigate();
 
-  const form = useForm<RegisterFormValues>({
-    initialValues: {
-      firstName: '',
-      lastName: '',
-      username: '',
-      address: '',
-      email: '',
-      phone: '',
-      password: '',
-      confirmPassword: '',
-    },
-    validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-      confirmPassword: (value, values) =>
-        value !== values.password ? 'Passwords do not match' : null,
-    },
+  const [formValues, setFormValues] = useState<RegisterFormValues>({
+    firstName: '',
+    lastName: '',
+    username: '',
+    address: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
   });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormValues((p) => ({ ...p, [name]: value }))
+  }
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [register] = useMutation(REGISTER);
 
-  const handleSubmit = async (values: RegisterFormValues) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
     try {
       const { data } = await register({
         variables: {
           input: {
-            first_name: values.firstName,
-            last_name: values.lastName,
-            username: values.username,
-            phone: values.phone,
-            email: values.email,
-            password: values.password,
+            first_name: formValues.firstName,
+            last_name: formValues.lastName,
+            username: formValues.username,
+            phone: formValues.phone,
+            email: formValues.email,
+            password: formValues.password,
           },
         },
       });
@@ -75,88 +74,132 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className={styles.container}>
-      <Box className={styles.card}>
-        <div className={styles.title}>REGISTRATION</div>
-        <form onSubmit={form.onSubmit(handleSubmit)}>
-          <div className={styles.row}>
-            <TextInput
-              placeholder="First Name"
-              className={styles.inputHalf}
-              {...form.getInputProps('firstName')}
-            />
-            <TextInput
-              placeholder="Last Name"
-              className={styles.inputHalf}
-              {...form.getInputProps('lastName')}
-            />
+    <div className="min-h-[80vh] flex justify-center items-center p-8">
+      <div className="w-full max-w-lg p-12 bg-white/95 backdrop-blur-2xl border border-white/20 shadow-2xl rounded-3xl text-center relative overflow-hidden">
+        <div className="text-2xl font-bold mb-8 bg-gradient-to-r from-indigo-500 to-purple-700 bg-clip-text text-transparent">REGISTRATION</div>
+        <form onSubmit={handleSubmit} className="space-y-6 text-left">
+          <div className="flex gap-4">
+            <div className="w-1/2 space-y-2">
+              <Label htmlFor="firstName">First Name</Label>
+              <Input
+                id="firstName"
+                name="firstName"
+                placeholder="First Name"
+                value={formValues.firstName}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="w-1/2 space-y-2">
+              <Label htmlFor="lastName">Last Name</Label>
+              <Input
+                id="lastName"
+                name="lastName"
+                placeholder="Last Name"
+                value={formValues.lastName}
+                onChange={handleChange}
+              />
+            </div>
           </div>
 
-          <div className={styles.input}>
-            <TextInput
+          <div className="space-y-2">
+            <Label htmlFor="address">Address</Label>
+            <Input
+              id="address"
+              name="address"
               placeholder="Address"
-              {...form.getInputProps('address')}
+              value={formValues.address}
+              onChange={handleChange}
             />
           </div>
 
-          <div className={styles.input}>
-            <TextInput
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              name="email"
               placeholder="Email"
-              {...form.getInputProps('email')}
+              value={formValues.email}
+              onChange={handleChange}
             />
           </div>
 
-          <div className={styles.row}>
-            <TextInput
-              placeholder="Username"
-              className={styles.inputHalf}
-              {...form.getInputProps('username')}
-            />
-            <TextInput
-              placeholder="Phone Number"
-              className={styles.inputHalf}
-              {...form.getInputProps('phone')}
-            />
+          <div className="flex gap-4">
+            <div className="w-1/2 space-y-2">
+              <Label htmlFor="username">Username</Label>
+              <Input
+                id="username"
+                name="username"
+                placeholder="Username"
+                value={formValues.username}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="w-1/2 space-y-2">
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input
+                id="phone"
+                name="phone"
+                placeholder="Phone Number"
+                value={formValues.phone}
+                onChange={handleChange}
+              />
+            </div>
           </div>
 
-          <div className={styles.input}>
-            <TextInput
-              placeholder="Password"
-              type={showPassword ? 'text' : 'password'}
-              className={styles.passwordInput}
-              {...form.getInputProps('password')}
-              rightSection={
-                <ActionIcon onClick={() => setShowPassword((prev) => !prev)} variant="transparent">
-                  {showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
-                </ActionIcon>
-              }
-              required
-            />
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <div className="relative">
+              <Input
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Password"
+                value={formValues.password}
+                onChange={handleChange}
+                required
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((p) => !p)}
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground"
+              >
+                {showPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
 
-          <div className={styles.input}>
-            <TextInput
-              placeholder="Confirm Password"
-              type={showConfirmPassword ? 'text' : 'password'}
-              className={styles.passwordInput}
-              {...form.getInputProps('confirmPassword')}
-              rightSection={
-                <ActionIcon onClick={() => setShowConfirmPassword((prev) => !prev)} variant="transparent">
-                  {showConfirmPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
-                </ActionIcon>
-              }
-              required
-            />
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <div className="relative">
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                placeholder="Confirm Password"
+                value={formValues.confirmPassword}
+                onChange={handleChange}
+                required
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword((p) => !p)}
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground"
+              >
+                {showConfirmPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
 
-          <Button type="submit" className={styles.button}>
+          <Button type="submit" className="w-full">
             REGISTER
           </Button>
         </form>
-        <div className={styles.linkText}>
-          Already have an account? <Link to="/login">Sign In</Link>
+        <div className="text-sm mt-8 text-slate-600">
+          Already have an account? <Link to="/login" className="text-indigo-600 hover:underline">Sign In</Link>
         </div>
-      </Box>
+      </div>
     </div>
   );
 }
